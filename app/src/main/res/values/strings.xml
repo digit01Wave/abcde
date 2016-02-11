@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MyUCI</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_homepage">HomepageActivity</string>
+
+    <string name="edit_message">Enter a message"</string>
+    <string name="button_send">Send</string>
+    <string name="title_activity_display_message">MyMessage</string>
+
+
+    <string name="action_favorite">Favorite Action</string>
+    <string name="action_search">Search</string>
+    <string name="share">Share</string>
+
+    <string name="user_name">Username</string>
+    <string name="login">Login</string>
+    <string name="pass_word">Password</string>
+    <string name="clear">Quit</string>
+    <string name="attempts_left">Attempts Left: </string>
+
+    <string name="group_title">Groups</string>
+    <string name="placeholder">PLACEHOLDER</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_event_list">EventListActivity</string>
+</resources>
