@@ -12,7 +12,10 @@ import android.preference.PreferenceActivity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
+
+//import cz.msebera.android.httpclient.Header;
 
 public class TestActivity extends AppCompatActivity {
     //DB Class to perform DB related operations
@@ -69,9 +74,17 @@ public class TestActivity extends AppCompatActivity {
 
         // If events exist in SQLite DB
         if (event_cursor.getColumnCount() != 0) {
-            ListView myList = (ListView) findViewById(android.R.id.list);
-//            MyCursorAdapter myAdapter = new MyCursorAdapter(this, event_cursor);
-//            myList.setAdapter(myAdapter);
+            String[][] myDataset = controller.getAllEventStrings();
+            MyAdapter mAdapter = new MyAdapter(myDataset);
+            RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.test_recycler_view);
+
+            mRecyclerView.setHasFixedSize(true);
+
+            // use a linear layout manager
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+
+            mRecyclerView.setAdapter(mAdapter);
         }
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(this);
@@ -121,7 +134,7 @@ public class TestActivity extends AppCompatActivity {
         // Show ProgressBar
         prgDialog.show();
         // Make Http call to getusers.php
-        client.post("http://127.0.0.1/mysqlsqlitesync/getusers.php", params, new AsyncHttpResponseHandler() {
+        client.post("http://10.0.2.2/mysqlitesync/getevents.php", params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onStart() {
@@ -134,7 +147,9 @@ public class TestActivity extends AppCompatActivity {
                 // Hide ProgressBar
                 prgDialog.hide();
                 // Update SQLite DB with response sent by getusers.php
+                //Log.d("MSG: ", response.toString());
                 updateSQLite(response.toString());
+
             }
 
             @Override
@@ -153,15 +168,12 @@ public class TestActivity extends AppCompatActivity {
 
             }
 
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
 
         });
     }
 
     public void updateSQLite(String response){
+        Log.d("MSG: ", "starting update ");
         ArrayList<String[]> event_synclist = new ArrayList<String[]>();
 
         // Create GSON object
@@ -169,7 +181,7 @@ public class TestActivity extends AppCompatActivity {
         try {
             // Extract JSON array from the response
             JSONArray arr = new JSONArray(response);
-            System.out.println(arr.length());
+            Log.d("MSG: ", "JSON array length = " + Integer.toString(arr.length()));
             // If no of array elements is not zero
             if(arr.length() != 0){
                 // Loop through each array element, get JSON object which has userid and username
@@ -177,6 +189,19 @@ public class TestActivity extends AppCompatActivity {
                     // Get JSON object
                     JSONObject obj = (JSONObject) arr.get(i);
                     queryValues = new String[EventEntry.NUM_COLUMNS];
+//                    Log.d("MSG: ", "AND SO IT BEGINS____________________________________");
+//                    Log.d("MSG: ", obj.get("event_id").toString());
+//                    Log.d("MSG: ", obj.get("title").toString());
+//                    Log.d("MSG: ", obj.get("hoster").toString());
+//                    Log.d("MSG: ", obj.get("start_time").toString());
+//                    Log.d("MSG: ", obj.get("end_time").toString());
+//                    Log.d("MSG: ", obj.get("lat").toString());
+//                    Log.d("MSG: ", obj.get("lon").toString());
+//                    Log.d("MSG: ", obj.get("location").toString());
+//                    Log.d("MSG: ", obj.get("description").toString());
+//                    Log.d("MSG: ", obj.get("link").toString());
+//                    Log.d("MSG: ", "AND HERE IT ENDS___________________________________");
+
                     // DB QueryValues Object to insert into SQLite
                     queryValues[0] = obj.get(EventEntry.COLUMN_NAME_EVENT_ID).toString();
                     queryValues[1] = obj.get(EventEntry.COLUMN_NAME_TITLE).toString();
@@ -199,6 +224,7 @@ public class TestActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
+            Log.d("MSG: ", "Inside the Excpetion");
             e.printStackTrace();
         }
     }

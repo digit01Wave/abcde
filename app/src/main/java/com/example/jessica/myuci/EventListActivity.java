@@ -65,7 +65,6 @@ public class EventListActivity extends AppCompatActivity {
         //MyCursorAdapter mAdapter = new MyCursorAdapter(this, event_cursor);
         MyAdapter mAdapter = new MyAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
-        //db.close();
 
     }
 
