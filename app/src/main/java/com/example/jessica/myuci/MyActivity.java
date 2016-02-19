@@ -56,7 +56,7 @@ public class MyActivity extends AppCompatActivity {
         }catch(Exception e){
             Log.d("FAILED OnCrate:", "Delete Failed" + e.toString());
         }
-
+        db.close();
 
 
     }

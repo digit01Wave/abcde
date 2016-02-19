@@ -22,4 +22,6 @@
     <string name="placeholder">PLACEHOLDER</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_event_list">EventListActivity</string>
+    <string name="title_activity_navigator">NavigatorActivity</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

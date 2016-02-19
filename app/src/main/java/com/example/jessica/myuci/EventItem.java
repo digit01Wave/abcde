@@ -36,6 +36,7 @@ public class EventItem {
         this.link = link;
     }
 
+
     public String toString(){
         return "EventItem [id=" + event_id + ", title=" + title + ", hoaster = " + hoster +
                 ", start_time=" + start_time.toString() + ", end_time=" + end_time.toString() +
@@ -48,7 +49,7 @@ public class EventItem {
         this.event_id = id;
     }
     public int getID(){
-        return event_id;
+        return this.event_id;
     }
 
     public void setTitle(String title){
