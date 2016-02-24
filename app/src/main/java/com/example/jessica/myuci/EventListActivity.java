@@ -53,16 +53,9 @@ public class EventListActivity extends AppCompatActivity {
         controller.addEventItem(new EventItem(1, "Second Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
                 "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
 
-        //get writable database
-        //QLiteDatabase db = controller.getReadableDatabase();
 
         String[][] myDataset = controller.getAllEventStrings();
 
-        //get cursor for all events
-        //Cursor event_cursor = db.rawQuery("SELECT  * FROM " + EventEntry.TABLE_NAME, null);
-
-        //MyAdapter mAdapter = new MyAdapter(myDataset.get(0));
-        //MyCursorAdapter mAdapter = new MyCursorAdapter(this, event_cursor);
         MyAdapter mAdapter = new MyAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
 

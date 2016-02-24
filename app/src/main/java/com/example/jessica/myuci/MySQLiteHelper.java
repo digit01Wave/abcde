@@ -13,6 +13,7 @@ import android.util.Log;
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
 import com.example.jessica.myuci.FeedReaderContract.UserEntry;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -100,7 +101,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addEventItem(String[] event_cols){
+    public void addEventItem(String[] event_cols, boolean milisecond_format) throws java.text.ParseException{
+        /*given array of strings of all event properties, will create event item
+        * in the form [id, title, hoster, start_time, end_time, lat, lon, location, description, link]
+        *
+        * milesecond_format means that the start and end_time is in miliseconds (can be converted to
+        * int. If set to false instead, then it means it is in the sql format 'YYYY-MM-DD HH:MM:SS'
+        *
+        * */
         Log.d("MSG: ", "AddEventItemStr");
         // reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -111,10 +119,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(EventEntry.COLUMN_NAME_TITLE, event_cols[1]);
         values.put(EventEntry.COLUMN_NAME_HOSTER, event_cols[2]);
 
-        Date start_time = new Date(Integer.parseInt(event_cols[3]));
-        Date end_time = new Date(Integer.parseInt(event_cols[4]));
-        values.put(EventEntry.COLUMN_NAME_START_TIME, start_time.getTime());
-        values.put(EventEntry.COLUMN_NAME_END_TIME, end_time.getTime());
+        if(milisecond_format){ //is in milisecond format
+            values.put(EventEntry.COLUMN_NAME_START_TIME, Integer.parseInt(event_cols[3]));
+            values.put(EventEntry.COLUMN_NAME_END_TIME, Integer.parseInt(event_cols[4]));
+        }
+        else{
+            DateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date start_time = date_format.parse(event_cols[3]);
+            Date end_time = date_format.parse(event_cols[4]);
+            values.put(EventEntry.COLUMN_NAME_START_TIME, start_time.getTime());
+            values.put(EventEntry.COLUMN_NAME_END_TIME, end_time.getTime());
+
+        }
         values.put(EventEntry.COLUMN_NAME_LAT, Double.parseDouble(event_cols[5]));
         values.put(EventEntry.COLUMN_NAME_LON, Double.parseDouble(event_cols[6]));
         values.put(EventEntry.COLUMN_NAME_LOCATION, event_cols[7]);
@@ -190,7 +206,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 e.setTitle(cursor.getString(2));
                 e.setHoster(cursor.getString(3));
 
-                SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
                 e.setStartTime(new Date(cursor.getInt(4)));
                 e.setEndTime(new Date(cursor.getInt(5)));
                 e.setLatLon(Double.parseDouble(cursor.getString(6)),
@@ -221,18 +236,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             int index = 0;
             do {
                 String[] event = {
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getString(4),
-                        cursor.getString(5),
-                        cursor.getString(6),
-                        cursor.getString(7),
-                        cursor.getString(8),
-                        cursor.getString(9),
-                        cursor.getString(10)
+                        cursor.getString(1), //event_id
+                        cursor.getString(2), //title
+                        cursor.getString(3), //hoster
+                        cursor.getString(4), //start_time
+                        cursor.getString(5), //end_time
+                        cursor.getString(6), //lat
+                        cursor.getString(7), //lon
+                        cursor.getString(8), //location
+                        cursor.getString(9), //description
+                        cursor.getString(10) //link
                 };
                 event_list[index] = event;
+
+                //since start_time and end_time are still in integer format, need to convert to datetime
+                SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
+                event_list[index][3] = ft.format(Long.parseLong(event_list[index][3]));
+                event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
+
                 index++;
             } while (cursor.moveToNext());
         }

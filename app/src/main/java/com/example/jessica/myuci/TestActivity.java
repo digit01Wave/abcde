@@ -19,17 +19,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,9 +37,11 @@ import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
 
-//import cz.msebera.android.httpclient.Header;
 
 public class TestActivity extends AppCompatActivity {
+    final static String URL_GET_EVENT = "http://10.0.2.2/mysqlitesync/getevents.php";
+    final static String URL_UPDATE_SYNCS = "http://10.0.2.2/mysqlsqlitesync/updatesyncsts.php";
+
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
@@ -92,7 +91,7 @@ public class TestActivity extends AppCompatActivity {
         prgDialog.setCancelable(false);
 
 //        // BroadCase Receiver Intent Object
-//        Intent alarmIntent = new Intent(getApplicationContext(), SampleBC.class);
+//        Intent alarmIntent = new Intent(getApplicationContext(), MyBroadcastReceiver.class);
 //        // Pending Intent Object
 //        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 //        // Alarm Manager Object
@@ -134,7 +133,7 @@ public class TestActivity extends AppCompatActivity {
         // Show ProgressBar
         prgDialog.show();
         // Make Http call to getusers.php
-        client.post("http://10.0.2.2/mysqlitesync/getevents.php", params, new AsyncHttpResponseHandler() {
+        client.get(URL_GET_EVENT, params, new TextHttpResponseHandler() {
 
             @Override
             public void onStart() {
@@ -142,18 +141,19 @@ public class TestActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            public void onSuccess(int statusCode, Header[] headers, String response) { //byte [] response
                 // called when response HTTP status is "200 OK"
                 // Hide ProgressBar
                 prgDialog.hide();
                 // Update SQLite DB with response sent by getusers.php
-                //Log.d("MSG: ", response.toString());
-                updateSQLite(response.toString());
+                Log.d("MSG: ", "In SUCCESS");
+                Log.d("MSG: ", response);
+                updateSQLite(response);
 
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable e) { //byte[] response
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 // Hide ProgressBar
                 prgDialog.hide();
@@ -189,18 +189,6 @@ public class TestActivity extends AppCompatActivity {
                     // Get JSON object
                     JSONObject obj = (JSONObject) arr.get(i);
                     queryValues = new String[EventEntry.NUM_COLUMNS];
-//                    Log.d("MSG: ", "AND SO IT BEGINS____________________________________");
-//                    Log.d("MSG: ", obj.get("event_id").toString());
-//                    Log.d("MSG: ", obj.get("title").toString());
-//                    Log.d("MSG: ", obj.get("hoster").toString());
-//                    Log.d("MSG: ", obj.get("start_time").toString());
-//                    Log.d("MSG: ", obj.get("end_time").toString());
-//                    Log.d("MSG: ", obj.get("lat").toString());
-//                    Log.d("MSG: ", obj.get("lon").toString());
-//                    Log.d("MSG: ", obj.get("location").toString());
-//                    Log.d("MSG: ", obj.get("description").toString());
-//                    Log.d("MSG: ", obj.get("link").toString());
-//                    Log.d("MSG: ", "AND HERE IT ENDS___________________________________");
 
                     // DB QueryValues Object to insert into SQLite
                     queryValues[0] = obj.get(EventEntry.COLUMN_NAME_EVENT_ID).toString();
@@ -215,7 +203,11 @@ public class TestActivity extends AppCompatActivity {
                     queryValues[9] = obj.get(EventEntry.COLUMN_NAME_LINK).toString();
 
                     // Insert Event into SQLite DB
-                    controller.addEventItem(queryValues);
+                    try {
+                        controller.addEventItem(queryValues, false);
+                    } catch(java.text.ParseException e){
+                        Log.d("FAILED: ", "Parse excpetion error. Could not add to Database" + e);
+                    }
                 }
                 // Inform Remote MySQL DB about the completion of Sync activity by passing Sync status of Users
                 //updateMySQLSyncSts(gson.toJson(event_synclist));
@@ -234,6 +226,26 @@ public class TestActivity extends AppCompatActivity {
         Intent objIntent = new Intent(getApplicationContext(), TestActivity.class);
         startActivity(objIntent);
     }
+
+//    // Method to inform remote MySQL DB about completion of Sync activity
+//    public void updateMySQLSyncSts(String json) {
+//        System.out.println(json);
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        RequestParams params = new RequestParams();
+//        params.put("syncsts", json);
+//        // Make Http call to updatesyncsts.php with JSON parameter which has Sync statuses of Users
+//        client.post(URL_UPDATE_SYNCS, params, new TextHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, String response) {
+//                Toast.makeText(getApplicationContext(), "MySQL DB has been informed about Sync activity", Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, String response, Throwable e) {
+//                Toast.makeText(getApplicationContext(), "Error Occured", Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
 
 
 

@@ -31,32 +31,7 @@ public class MyActivity extends AppCompatActivity {
             }
         });
 
-        MySQLiteHelper db = new MySQLiteHelper(this, null);
 
-        // add EventItem
-        try {
-            db.addEventItem(new EventItem(0, "Some Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
-                    "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
-            db.addEventItem(new EventItem(1, "Second Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
-                    "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
-        }catch(Exception e){
-            Log.d("FAILED OnCreate:", "Add failed. " + e.toString());
-        }
-
-        try{
-            EventItem e = db.getEventItem(0);
-        }
-        catch (ParseException e){
-            Log.d("FAILED onCreate:", "RETRIEVED FAILED" + e.toString());
-        }
-
-        try {
-            // delete one EventItem
-            db.deleteEventItem(0);
-        }catch(Exception e){
-            Log.d("FAILED OnCrate:", "Delete Failed" + e.toString());
-        }
-        db.close();
 
 
     }
@@ -66,6 +41,7 @@ public class MyActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_my, menu);
         return true;
+        
     }
 
     @Override
@@ -81,5 +57,18 @@ public class MyActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addEvents(){
+        MySQLiteHelper db = new MySQLiteHelper(this, null);
+
+        // add EventItems
+        db.addEventItem(new EventItem(0, "Some Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
+                "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
+        db.addEventItem(new EventItem(1, "Second Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
+                "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
+
+        db.close();
+
     }
 }
