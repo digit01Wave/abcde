@@ -86,4 +86,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return mDataset.length;
     }
 
+    public String[] getDatasetItem(int position){
+        return mDataset[position];
+    }
+
+
 }

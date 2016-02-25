@@ -1,5 +1,6 @@
 package com.example.jessica.myuci;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -58,6 +59,21 @@ public class EventListActivity extends AppCompatActivity {
 
         MyAdapter mAdapter = new MyAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
+
+        //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
+        //to solve recycler view's onclick problem
+        ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Intent intent = new Intent(v.getContext(), EventViewActivity.class);
+                Bundle bundle = new Bundle();
+                MyAdapter a = (MyAdapter) recyclerView.getAdapter();
+                bundle.putStringArray("event_info", a.getDatasetItem(position));
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
 
     }
 

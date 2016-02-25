@@ -1,24 +1,24 @@
 package com.example.jessica.myuci;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
-import java.text.ParseException;
 import java.util.Date;
 
-public class MyActivity extends AppCompatActivity {
+public class PopulateDatabaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my);
+        setContentView(R.layout.activity_populate_database);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -30,7 +30,12 @@ public class MyActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+        Button button = (Button) findViewById(R.id.button5);
+        button.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                addEvents(v.getContext());
+            }
+        });
 
 
 
@@ -41,7 +46,7 @@ public class MyActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_my, menu);
         return true;
-        
+
     }
 
     @Override
@@ -59,16 +64,16 @@ public class MyActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addEvents(){
-        MySQLiteHelper db = new MySQLiteHelper(this, null);
+    public void addEvents(Context context){
+        MySQLiteHelper db = new MySQLiteHelper(context, null);
 
         // add EventItems
         db.addEventItem(new EventItem(0, "Some Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
                 "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
         db.addEventItem(new EventItem(1, "Second Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
-                "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
-
-        db.close();
+                "DBH 100", "SOME REALLY LONG DESCRIPTION", "None"));
+        db.addEventItem(new EventItem(1, "Thrid Title", "None", new Date(), new Date(), 12.3456, 14.5678,
+                "DBH 100", "SOME REALLY LONG DESCRIPTION", "None"));
 
     }
 }

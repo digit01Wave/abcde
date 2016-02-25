@@ -32,8 +32,8 @@ public class NavigatorActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goMyActivityTest(View view){
-        Intent intent = new Intent(this, MyActivity.class);
+    public void goPopulateDatabaseActivity(View view){
+        Intent intent = new Intent(this, PopulateDatabaseActivity.class);
         startActivity(intent);
     }
 

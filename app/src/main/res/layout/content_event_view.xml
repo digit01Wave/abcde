@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.jessica.myuci.EventViewActivity"
+    tools:showIn="@layout/activity_event_view">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+        <RelativeLayout
+            android:id="@+id/form_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/event_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:text="Title Placeholder"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:id="@+id/event_hoster"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/event_title"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text="Host Placeholder" />
+
+            <TextView
+                android:id="@+id/event_time_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text="Time: "
+                android:layout_below="@+id/event_hoster" />
+
+            <TextView
+                android:id="@+id/event_time_span"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text="Time Span Placeholder"
+                android:layout_below="@+id/event_hoster"
+                android:layout_toRightOf="@id/event_time_title" />
+
+            <TextView
+                android:id="@+id/event_location_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text="Location: "
+                android:layout_below="@+id/event_time_span" />
+
+
+            <TextView
+                android:id="@+id/event_location"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text = "Place Placeholder"
+                android:layout_below="@+id/event_time_span"
+                android:layout_toRightOf="@id/event_location_title" />
+
+
+
+            <TextView
+                android:id="@+id/event_description_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text="Description: "
+                android:layout_below="@+id/event_location" />
+
+            <TextView
+                android:id="@+id/event_description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text = "No description provided."
+                android:layout_below="@+id/event_location"
+                android:layout_toRightOf="@id/event_description_title"/>
+
+            <TextView
+                android:id="@+id/event_link"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text = "No link provided."
+                android:layout_below="@+id/event_description" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
+

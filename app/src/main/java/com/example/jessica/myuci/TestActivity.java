@@ -45,6 +45,7 @@ public class TestActivity extends AppCompatActivity {
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
+
     //Progress Dialog Object
     ProgressDialog prgDialog;
     String[] queryValues;
@@ -82,8 +83,22 @@ public class TestActivity extends AppCompatActivity {
             // use a linear layout manager
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
             mRecyclerView.setLayoutManager(mLayoutManager);
-
             mRecyclerView.setAdapter(mAdapter);
+
+
+            //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
+            //to solve recycler view's onclick problem
+            ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                @Override
+                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                    Intent intent = new Intent(v.getContext(), EventViewActivity.class);
+                    Bundle bundle = new Bundle();
+                    MyAdapter a = (MyAdapter) recyclerView.getAdapter();
+                    bundle.putStringArray("event_info", a.getDatasetItem(position));
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
         }
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(this);

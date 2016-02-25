@@ -19,6 +19,7 @@ public class EventItem {
 
     public EventItem(){
 
+
     }
 
     public EventItem(int event_id, String title, String hoster,
