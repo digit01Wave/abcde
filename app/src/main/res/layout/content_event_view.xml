@@ -19,6 +19,19 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/image"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:text="Image Placeholder"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:id="@+id/event_title"
@@ -30,15 +43,13 @@
                 android:textSize="17sp"
                 android:text="Title Placeholder"
                 android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_below="@id/image" />
 
             <TextView
                 android:id="@+id/event_hoster"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/event_title"
+                android:layout_below="@id/event_title"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
                 android:textColor="#008000"
@@ -56,7 +67,7 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="Time: "
-                android:layout_below="@+id/event_hoster" />
+                android:layout_below="@id/event_hoster" />
 
             <TextView
                 android:id="@+id/event_time_span"
@@ -68,7 +79,7 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="Time Span Placeholder"
-                android:layout_below="@+id/event_hoster"
+                android:layout_below="@id/event_hoster"
                 android:layout_toRightOf="@id/event_time_title" />
 
             <TextView
@@ -81,7 +92,7 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="Location: "
-                android:layout_below="@+id/event_time_span" />
+                android:layout_below="@id/event_time_span" />
 
 
             <TextView
@@ -94,7 +105,7 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text = "Place Placeholder"
-                android:layout_below="@+id/event_time_span"
+                android:layout_below="@id/event_time_span"
                 android:layout_toRightOf="@id/event_location_title" />
 
 
@@ -109,7 +120,7 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="Description: "
-                android:layout_below="@+id/event_location" />
+                android:layout_below="@id/event_location" />
 
             <TextView
                 android:id="@+id/event_description"
@@ -121,7 +132,7 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text = "No description provided."
-                android:layout_below="@+id/event_location"
+                android:layout_below="@id/event_location"
                 android:layout_toRightOf="@id/event_description_title"/>
 
             <TextView
@@ -134,7 +145,7 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text = "No link provided."
-                android:layout_below="@+id/event_description" />
+                android:layout_below="@id/event_description" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

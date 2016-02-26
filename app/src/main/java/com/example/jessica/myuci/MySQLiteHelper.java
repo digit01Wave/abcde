@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
-import com.example.jessica.myuci.FeedReaderContract.UserEntry;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,7 +45,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     EventEntry.COLUMN_NAME_LON + REAL_TYPE + COMMA_SEP +
                     EventEntry.COLUMN_NAME_LOCATION + TEXT_TYPE + COMMA_SEP +
                     EventEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
-                    EventEntry.COLUMN_NAME_LINK + TEXT_TYPE +
+                    EventEntry.COLUMN_NAME_LINK + TEXT_TYPE + COMMA_SEP +
+                    EventEntry.COLUMN_NAME_IMAGE_LINK + TEXT_TYPE +
             " )";
 
     private static final String SQL_DELETE_EVENT_TABLE =
@@ -90,6 +90,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(EventEntry.COLUMN_NAME_LOCATION, event.getLocation());
         values.put(EventEntry.COLUMN_NAME_DESCRIPTION, event.getDescription());
         values.put(EventEntry.COLUMN_NAME_LINK, event.getLink());
+        values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event.getImageLink());
 
         // insert
         db.insert(EventEntry.TABLE_NAME, // table
@@ -136,6 +137,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(EventEntry.COLUMN_NAME_LOCATION, event_cols[7]);
         values.put(EventEntry.COLUMN_NAME_DESCRIPTION, event_cols[8]);
         values.put(EventEntry.COLUMN_NAME_LINK, event_cols[9]);
+        values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event_cols[10]);
 
         // insert
         db.insert(EventEntry.TABLE_NAME, // table
@@ -173,6 +175,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             e.setLocation(cursor.getString(8));
             e.setDescription(cursor.getString(9));
             e.setLink(cursor.getString(10));
+            e.setImageLink(cursor.getString(11));
 
             cursor.close();
 
@@ -213,6 +216,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 e.setLocation(cursor.getString(8));
                 e.setDescription(cursor.getString(9));
                 e.setLink(cursor.getString(10));
+                e.setImageLink(cursor.getString(11));
 
                 // Add newly created e to events
                 events.add(e);
@@ -245,7 +249,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         cursor.getString(7), //lon
                         cursor.getString(8), //location
                         cursor.getString(9), //description
-                        cursor.getString(10) //link
+                        cursor.getString(10), //link
+                        cursor.getString(11) //image_link
                 };
                 event_list[index] = event;
 
@@ -281,6 +286,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.d("MSG: ", "deleteEventItem id=" + Integer.toString(id));
 
         return result;
+    }
+
+    public void deleteAllEvents(SQLiteDatabase db){
+        /*will delete all events in database*/
+        db.delete(EventEntry.TABLE_NAME, null, null);
+        Log.d("MSG: ", "All events have been deleted");
     }
 
 

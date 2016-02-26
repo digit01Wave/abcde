@@ -16,6 +16,7 @@ public class EventItem {
     private String location;
     private String description;
     private String link;
+    private String image_link;
 
     public EventItem(){
 
@@ -24,7 +25,7 @@ public class EventItem {
 
     public EventItem(int event_id, String title, String hoster,
                      Date start_time, Date end_time, double lat, double lon,
-                     String location, String description, String link){
+                     String location, String description, String link, String image_link){
         this.event_id = event_id;
         this.title = title;
         this.hoster = hoster;
@@ -35,6 +36,7 @@ public class EventItem {
         this.location = location;
         this.description = description;
         this.link = link;
+        this.image_link = image_link;
     }
 
 
@@ -42,7 +44,7 @@ public class EventItem {
         return "EventItem [id=" + event_id + ", title=" + title + ", hoaster = " + hoster +
                 ", start_time=" + start_time.toString() + ", end_time=" + end_time.toString() +
                 ", lat=" + String.valueOf(lat) + ", lon=" + String.valueOf(lon) +
-                ", location=" + location + ", description=" + description + ", link=" + link + "]";
+                ", location=" + location + ", description=" + description + ", link=" + link + ", image_link=" + link + "]";
     }
 
 
@@ -103,6 +105,13 @@ public class EventItem {
     }
     public String getLink(){
         return this.link;
+    }
+
+    public void setImageLink(String link){
+        this.image_link = link;
+    }
+    public String getImageLink(){
+        return this.image_link;
     }
 
 }

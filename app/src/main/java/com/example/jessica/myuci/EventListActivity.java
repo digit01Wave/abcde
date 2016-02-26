@@ -49,11 +49,6 @@ public class EventListActivity extends AppCompatActivity {
         //get database
         MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
-        controller.addEventItem(new EventItem(0, "FirstTitle", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
-                "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
-        controller.addEventItem(new EventItem(1, "Second Title", "Some Host", new Date(), new Date(), 12.3456, 14.5678,
-                "DBH 100", "SOME REALLY LONG DESCRIPTION", "Some Link"));
-
 
         String[][] myDataset = controller.getAllEventStrings();
 

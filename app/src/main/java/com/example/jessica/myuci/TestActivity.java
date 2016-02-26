@@ -117,6 +117,7 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
+
     // Options Menu (ActionBar Menu)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -231,7 +232,7 @@ public class TestActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            Log.d("MSG: ", "Inside the Excpetion");
+            Log.d("---", "error in updateMySqlLite");
             e.printStackTrace();
         }
     }

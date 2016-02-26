@@ -27,12 +27,7 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_LOCATION = "location";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_LINK = "link";
+        public static final String COLUMN_NAME_IMAGE_LINK = "image_link";
     }
 
-    /* Inner class that defines the table contents */
-    public static abstract class UserEntry implements BaseColumns{
-        public static final String TABLE_NAME = "users";
-        public static final String COLUMN_NAME_USER_ID = "user_id";
-        public static final String COLUMN_NAME_USER = "username";
-    }
 }
