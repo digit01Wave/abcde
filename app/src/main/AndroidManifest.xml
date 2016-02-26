@@ -2,15 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.jessica.myuci">
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name = "login.myUCIApplication"
+        android:name=".StarterApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="io.krumbs.sdk.APPLICATION_ID"
+            android:value="@string/krumbssdk_app_id" />
+        <meta-data
+            android:name="io.krumbs.sdk.CLIENT_KEY"
+            android:value="@string/krumbssdk_client_key" />
         <activity
             android:name=".PopulateDatabaseActivity"
             android:label="@string/app_name"
@@ -22,7 +29,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".EventListActivity"
             android:label="@string/title_activity_event_list"
@@ -50,6 +57,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.jessica.myuci.EventListActivity" />
         </activity>
+        <activity
+            android:name=".KrumbsActivity"
+            android:label="@string/title_activity_krumbs"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -52,5 +52,16 @@
         android:layout_marginTop="30dp"
         android:onClick="goTestActivity"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/krumbs_button_label"
+        android:id="@+id/kcapturebutton"
+        android:layout_below="@+id/button4"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:onClick="goKrumbsActivity"/>
+
+
 
 </RelativeLayout>

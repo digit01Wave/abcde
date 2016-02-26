@@ -6,9 +6,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
+import java.util.Map;
+
+import io.krumbs.sdk.KrumbsSDK;
+import io.krumbs.sdk.krumbscapture.KCaptureCompleteListener;
+
 public class NavigatorActivity extends AppCompatActivity {
+    private View cameraView;
+    private View startCaptureButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +33,9 @@ public class NavigatorActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        //KrumbsSDK.initialize(getApplicationContext(), "zmmzAIzwM65XahnKb1lmD1ij7z4J2bToqRRIuGDH", "bJI7wx5HafWH9x6icjJ9RtMQEZf4XxpoOtX6TJwm");
+
     }
 
     public void goLoginActivity(View view){
@@ -46,6 +57,12 @@ public class NavigatorActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TestActivity.class);
         startActivity(intent);
     }
+
+    public void goKrumbsActivity(View view){
+        Intent intent = new Intent(this, KrumbsActivity.class);
+        startActivity(intent);
+    }
+
 
 
 

@@ -26,4 +26,8 @@
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_event_view">EventViewActivity</string>
+    <string name="title_activity_krumbs">KrumbsActivity</string>
+    <string name="krumbs_button_label">Krumbs Capture</string>
+    <string name="krumbssdk_app_id">zmmzAIzwM65XahnKb1lmD1ij7z4J2bToqRRIuGDH</string>
+    <string name="krumbssdk_client_key">bJI7wx5HafWH9x6icjJ9RtMQEZf4XxpoOtX6TJwm</string>
 </resources>
