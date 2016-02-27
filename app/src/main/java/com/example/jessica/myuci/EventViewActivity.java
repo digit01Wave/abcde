@@ -35,57 +35,68 @@ public class EventViewActivity extends AppCompatActivity {
         //get event items
         Bundle extras = getIntent().getExtras();
         event_info = extras.getStringArray("event_info");
-
         prgDialog = new ProgressDialog(this);
         prgDialog.setMessage("Getting full event data. Please wait...");
         prgDialog.setCancelable(false);
+        if (!prgDialog.isShowing()) {
+            prgDialog.show();
+        }
 
-        createEventView();
+
+        new Thread(){
+            public void run(){
+                try{
+                    runOnUiThread(new Runnable(){
+                       @Override
+                       public void run(){
+                           createEventView();
+                           prgDialog.dismiss();
+                       }
+                    });
+
+                }catch(Exception e){
+                    Log.e("---", e.getMessage());
+                }
+            }
+        }.start();
+
 
     }
 
     private void createEventView() {
-        runOnUiThread(new Runnable(){
-            @Override
-            public void run() {
-                prgDialog.show();
-                TextView image_link = (TextView) findViewById(R.id.image);
-                TextView title = (TextView) findViewById(R.id.event_title);
-                TextView hoster = (TextView) findViewById(R.id.event_hoster);
-                TextView time_span = (TextView) findViewById(R.id.event_time_span);
-                TextView location = (TextView) findViewById(R.id.event_location);
-                TextView description = (TextView) findViewById(R.id.event_description);
-                TextView link = (TextView) findViewById(R.id.event_link);
-                //set textViews
-                title.setText(event_info[1]);
-                if(event_info[2] == "None") { //host does not need to be there
-                    hoster.setVisibility(View.GONE);
-                } else{
-                    hoster.setText(event_info[2]);
-                }
-                time_span.setText(event_info[3] + " - " + event_info[4]);
-                location.setText(event_info[7]);
-                description.setText(event_info[8]);
-                if(event_info[9] == "None") { //link does not need to be there
-                    link.setVisibility(View.GONE);
-                } else{
-                    link.setText(event_info[9]);
-                }
-                if(event_info[10] == "None") { //image_link empty
-                    image_link.setText(event_info[10]);
-                } else{
-                    image_link.setText(event_info[10]);
-                }
+
+        TextView image_link = (TextView) findViewById(R.id.image);
+        TextView title = (TextView) findViewById(R.id.event_title);
+        TextView hoster = (TextView) findViewById(R.id.event_hoster);
+        TextView time_span = (TextView) findViewById(R.id.event_time_span);
+        TextView location = (TextView) findViewById(R.id.event_location);
+        TextView description = (TextView) findViewById(R.id.event_description);
+        TextView link = (TextView) findViewById(R.id.event_link);
+        //set textViews
+        title.setText(event_info[1]);
+        if (event_info[2] == "None") { //host does not need to be there
+            hoster.setVisibility(View.GONE);
+        } else {
+            hoster.setText(event_info[2]);
+        }
+    time_span.setText(event_info[3] + " - " + event_info[4]);
+        location.setText(event_info[7]);
+        description.setText(event_info[8]);
+        if (event_info[9] == "None") { //link does not need to be there
+            link.setVisibility(View.GONE);
+        } else {
+            link.setText(event_info[9]);
+        }
+        if (event_info[10] == "None") { //image_link empty
+            image_link.setText(event_info[10]);
+        } else {
+            image_link.setText(event_info[10]);
+        }
 
 
-                Log.d("MSG: ", "EventViewActivity Completed");
-                try {
-                    prgDialog.dismiss();
-                } catch (final Exception ex) {
-                    Log.i("---","Exception in thread");
-                }
-            }
-        });
+        Log.d("MSG: ", "EventViewActivity Completed");
+
+
     }
 
 }

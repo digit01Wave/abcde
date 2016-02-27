@@ -19,7 +19,7 @@ import java.util.Date;
 
 
 public class EventListActivity extends AppCompatActivity {
-
+    RecyclerView mRecyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +35,7 @@ public class EventListActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

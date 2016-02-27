@@ -15,7 +15,7 @@ public final class FeedReaderContract {
 
     /* Inner class that defines the table contents */
     public static abstract class EventEntry implements BaseColumns{
-        public static final int NUM_COLUMNS = 10;
+        public static final int NUM_COLUMNS = 11;
         public static final String TABLE_NAME = "uci_event";
         public static final String COLUMN_NAME_EVENT_ID = "event_id";
         public static final String COLUMN_NAME_TITLE = "title";

@@ -217,6 +217,7 @@ public class TestActivity extends AppCompatActivity {
                     queryValues[7] = obj.get(EventEntry.COLUMN_NAME_LOCATION).toString();
                     queryValues[8] = obj.get(EventEntry.COLUMN_NAME_DESCRIPTION).toString();
                     queryValues[9] = obj.get(EventEntry.COLUMN_NAME_LINK).toString();
+                    queryValues[10] = obj.get(EventEntry.COLUMN_NAME_IMAGE_LINK).toString();
 
                     // Insert Event into SQLite DB
                     try {
