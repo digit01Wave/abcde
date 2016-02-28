@@ -63,6 +63,11 @@ public class NavigatorActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goWatchLaterListActivity(View view){
+        Intent intent = new Intent(this, WatchLaterListActivity.class);
+        startActivity(intent);
+    }
+
 
 
 

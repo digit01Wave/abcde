@@ -20,7 +20,7 @@ public class KrumbsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_krumbs);
         Log.d("MSG: ", "Inside Krumbs Create");
-        StarterApplication initial = new StarterApplication();
+        //StarterApplication initial = new StarterApplication();
         Log.d("MSG: ", "Outside Start Application and beginning capture");
         startCapture();
     }

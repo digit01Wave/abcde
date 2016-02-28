@@ -43,6 +43,7 @@
     <string name="description_placeholder">No description provided.</string>
     <string name="link_placeholder">No link provided.</string>
     <string name="image_placeholder">No image provided.</string>
+    <string name="title_activity_watch_later_list">WatchLaterListActivity</string>
 
 
 </resources>

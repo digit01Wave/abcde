@@ -38,8 +38,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
-                    EventEntry._ID + " INTEGER PRIMARY KEY," +
-                    EventEntry.COLUMN_NAME_EVENT_ID + INT_TYPE + COMMA_SEP +
+                    EventEntry.COLUMN_NAME_EVENT_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
                     EventEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                     EventEntry.COLUMN_NAME_HOSTER + TEXT_TYPE + COMMA_SEP +
                     EventEntry.COLUMN_NAME_START_TIME + INT_TYPE + COMMA_SEP +
@@ -53,9 +52,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             " )";
     private static final String SQL_CREATE_WATCH_LATER_TABLE =
             "CREATE TABLE " + WLEntry.TABLE_NAME + " (" +
-                    WLEntry._ID + " INTEGER PRIMARY KEY," +
-                    WLEntry.COLUMN_NAME_USER_ID + INT_TYPE + COMMA_SEP +
-                    WLEntry.COLUMN_NAME_EVENT_ID + INT_TYPE +
+                    WLEntry.COLUMN_NAME_USER_ID + TEXT_TYPE + COMMA_SEP +
+                    WLEntry.COLUMN_NAME_EVENT_ID + INT_TYPE + COMMA_SEP +
+                    WLEntry.COLUMN_NAME_UPDATE_STATUS + TEXT_TYPE + COMMA_SEP +
+                    "PRIMARY KEY (" + WLEntry.COLUMN_NAME_USER_ID + ", " + WLEntry.COLUMN_NAME_EVENT_ID + ")" +
                     ")";
 
     private static final String SQLITE_SELECT_UNSYNCED_WL = "SELECT  * FROM " + WLEntry.TABLE_NAME + " where "+WLEntry.COLUMN_NAME_UPDATE_STATUS +" = '"+"no"+"'";
@@ -74,6 +74,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // SQL statement to create event table
         db.execSQL(SQL_CREATE_EVENT_TABLE);
         db.execSQL(SQL_CREATE_WATCH_LATER_TABLE);
+        Log.d("MSG: ", "Created Event and Watch Later Tables");
     }
 
     @Override
@@ -81,16 +82,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Drop older books table if existed
         db.execSQL(SQL_DELETE_EVENT_TABLE);
         db.execSQL(SQL_DELETE_WATCH_LATER_TABLE);
+        Log.d("MSG: ", "Upgraded Event and Watch Later Tables");
 
-        // create fresh books table
+        // create fresh tables
         this.onCreate(db);
     }
 
     //for testing purposes
     public void addEventItem(EventItem event){
-        //for logging
         Log.d("MSG:", "addEventItem(event)"+event.toString());
-
         // reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -108,11 +108,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(EventEntry.COLUMN_NAME_LINK, event.getLink());
         values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event.getImageLink());
 
-        // insert
-        db.insert(EventEntry.TABLE_NAME, // table
-                null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
-
+        try {
+            // insert
+            db.insert(EventEntry.TABLE_NAME, // table
+                    null, //nullColumnHack
+                    values); // key/value -> keys = column names/ values = column values
+        }catch(Exception e){
+            //for logging
+            Log.d("---", "FAILED to addEventItem(event)"+event.toString() + e.toString());
+        }
         // close
         db.close();
 
@@ -155,11 +159,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(EventEntry.COLUMN_NAME_LINK, event_cols[9]);
         values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event_cols[10]);
 
-        // insert
-        db.insert(EventEntry.TABLE_NAME, // table
-                null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
-
+        try {
+            // insert
+            db.insert(EventEntry.TABLE_NAME, // table
+                    null, //nullColumnHack
+                    values); // key/value -> keys = column names/ values = column values
+        }catch(Exception e){
+            //for logging
+            Log.d("---", "FAILED to addEventItemStr" + e.toString());
+        }
         // close
         db.close();
     }
@@ -175,17 +183,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             int index = 0;
             do {
                 String[] event = {
-                        cursor.getString(1), //event_id
-                        cursor.getString(2), //title
-                        cursor.getString(3), //hoster
-                        cursor.getString(4), //start_time
-                        cursor.getString(5), //end_time
-                        cursor.getString(6), //lat
-                        cursor.getString(7), //lon
-                        cursor.getString(8), //location
-                        cursor.getString(9), //description
-                        cursor.getString(10), //link
-                        cursor.getString(11) //image_link
+                        cursor.getString(0), //event_id
+                        cursor.getString(1), //title
+                        cursor.getString(2), //hoster
+                        cursor.getString(3), //start_time
+                        cursor.getString(4), //end_time
+                        cursor.getString(5), //lat
+                        cursor.getString(6), //lon
+                        cursor.getString(7), //location
+                        cursor.getString(8), //description
+                        cursor.getString(9), //link
+                        cursor.getString(10) //image_link
                 };
                 event_list[index] = event;
 
@@ -211,11 +219,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         /*
     ################################################################################################
 
-    BELOW ARE POSSIBLE METHODS FOR WATCH LATER LIST
+    BELOW ARE METHODS FOR WATCH LATER LIST
 
     ################################################################################################
     */
-    public void addWatchLaterItem(String[] event_cols){
+    public void addWatchLaterItem(String user_id, String event_id){
     /*given array of strings of all event properties, will create watch later item
     * in the form [id, title, hoster, start_time, end_time, lat, lon, location, description, link]
     *
@@ -229,8 +237,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         //create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
-        values.put(WLEntry.COLUMN_NAME_USER_ID, event_cols[0]);
-        values.put(WLEntry.COLUMN_NAME_EVENT_ID, event_cols[1]);
+        values.put(WLEntry.COLUMN_NAME_USER_ID, user_id);
+        values.put(WLEntry.COLUMN_NAME_EVENT_ID, event_id);
+        values.put(WLEntry.COLUMN_NAME_UPDATE_STATUS, "no");
 
         // insert
         db.insert(WLEntry.TABLE_NAME, // table
@@ -239,11 +248,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // close
         db.close();
-        Log.d("MSG: ", "AddWatchLaterEventStr");
+        Log.d("MSG: ", "AddWatchLaterEvent(" + user_id + ", " + event_id + ")");
     }
 
-    public String[][] getAllWatchLater() {
-        String selectQuery = "SELECT  * FROM " + WLEntry.TABLE_NAME;
+    public String[][] getAllWatchLaterEvents(String user_id) {
+        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " INNER JOIN " + WLEntry.TABLE_NAME +
+                " ON " + WLEntry.TABLE_NAME + "." + WLEntry.COLUMN_NAME_USER_ID + " = " + user_id +
+                " AND " + EventEntry.TABLE_NAME + "." + EventEntry.COLUMN_NAME_EVENT_ID + " = " +
+                WLEntry.TABLE_NAME + "." + WLEntry.COLUMN_NAME_EVENT_ID;
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         int num_rows = cursor.getCount();
@@ -252,16 +264,57 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             int index = 0;
             do {
                 String[] event = {
-                        cursor.getString(1), //user_id
-                        cursor.getString(2) //event_id
+                        cursor.getString(0), //event_id
+                        cursor.getString(1), //title
+                        cursor.getString(2), //hoster
+                        cursor.getString(3), //start_time
+                        cursor.getString(4), //end_time
+                        cursor.getString(5), //lat
+                        cursor.getString(6), //lon
+                        cursor.getString(7), //location
+                        cursor.getString(8), //description
+                        cursor.getString(9), //link
+                        cursor.getString(10) //image_link
                 };
                 event_list[index] = event;
+
+                //since start_time and end_time are still in integer format, need to convert to datetime
+                SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
+                event_list[index][3] = ft.format(Long.parseLong(event_list[index][3]));
+                event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
+
                 index++;
             } while (cursor.moveToNext());
         }
         database.close();
-        Log.d("MSG:", "getAllWatchLater()");
+        Log.d("MSG:", selectQuery);
         return event_list;
+    }
+
+    /*
+    * gets only the user_id and event_ids in watch later list
+    * */
+    public String[][] getSQLiteWatchLaterEvents(String user_id){
+        String selectQuery = "SELECT  * FROM " + WLEntry.TABLE_NAME + " WHERE " + WLEntry.COLUMN_NAME_USER_ID +
+                " = '" + user_id +"'";
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        int num_rows = cursor.getCount();
+        String[][] watch_later_list = new String[num_rows][];
+        if (cursor.moveToFirst()) {
+            int index = 0;
+            do {
+                String[] event = {
+                        user_id,
+                        cursor.getString(2), //event_id
+                };
+                watch_later_list[index] = event;
+                index++;
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        Log.d("MSG:", "getAllSQLiteWatchLater()");
+        return watch_later_list;
     }
 
     /**
@@ -316,7 +369,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      */
     public void updateWatchLaterSyncStatus(String user_id, String event_id, String status){
         SQLiteDatabase database = this.getWritableDatabase();
-        String updateQuery = "Update users set "+WLEntry.COLUMN_NAME_UPDATE_STATUS+" = '"+ status +
+        String updateQuery = "Update " + WLEntry.TABLE_NAME + " set "+WLEntry.COLUMN_NAME_UPDATE_STATUS+" = '"+ status +
                 "' where " + WLEntry.COLUMN_NAME_USER_ID + "= '"+ user_id +"' AND "
                 + WLEntry.COLUMN_NAME_EVENT_ID + " = '" + event_id +"'";
         Log.d("MSG: ", "query = " + updateQuery);
@@ -347,19 +400,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         EventItem e = new EventItem();
         if (cursor.moveToFirst()) {
             cursor.moveToFirst();
-            e.setID(Integer.parseInt(cursor.getString(1)));
-            e.setTitle(cursor.getString(2));
-            e.setHoster(cursor.getString(3));
+            e.setID(Integer.parseInt(cursor.getString(0)));
+            e.setTitle(cursor.getString(1));
+            e.setHoster(cursor.getString(2));
 
             SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
-            e.setStartTime(new Date(cursor.getInt(4)));
-            e.setEndTime(new Date(cursor.getInt(5)));
-            e.setLatLon(Double.parseDouble(cursor.getString(6)),
-                    Double.parseDouble(cursor.getString(7)));
-            e.setLocation(cursor.getString(8));
-            e.setDescription(cursor.getString(9));
-            e.setLink(cursor.getString(10));
-            e.setImageLink(cursor.getString(11));
+            e.setStartTime(new Date(cursor.getInt(3)));
+            e.setEndTime(new Date(cursor.getInt(4)));
+            e.setLatLon(Double.parseDouble(cursor.getString(5)),
+                    Double.parseDouble(cursor.getString(6)));
+            e.setLocation(cursor.getString(7));
+            e.setDescription(cursor.getString(8));
+            e.setLink(cursor.getString(9));
+            e.setImageLink(cursor.getString(10));
 
             cursor.close();
 
@@ -410,18 +463,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 e = new EventItem();
-                e.setID(Integer.parseInt(cursor.getString(1)));
-                e.setTitle(cursor.getString(2));
-                e.setHoster(cursor.getString(3));
+                e.setID(Integer.parseInt(cursor.getString(0)));
+                e.setTitle(cursor.getString(1));
+                e.setHoster(cursor.getString(2));
 
-                e.setStartTime(new Date(cursor.getInt(4)));
-                e.setEndTime(new Date(cursor.getInt(5)));
-                e.setLatLon(Double.parseDouble(cursor.getString(6)),
-                        Double.parseDouble(cursor.getString(7)));
-                e.setLocation(cursor.getString(8));
-                e.setDescription(cursor.getString(9));
-                e.setLink(cursor.getString(10));
-                e.setImageLink(cursor.getString(11));
+                e.setStartTime(new Date(cursor.getInt(3)));
+                e.setEndTime(new Date(cursor.getInt(4)));
+                e.setLatLon(Double.parseDouble(cursor.getString(5)),
+                        Double.parseDouble(cursor.getString(6)));
+                e.setLocation(cursor.getString(7));
+                e.setDescription(cursor.getString(8));
+                e.setLink(cursor.getString(9));
+                e.setImageLink(cursor.getString(10));
 
                 // Add newly created e to events
                 events.add(e);

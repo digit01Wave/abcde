@@ -94,6 +94,7 @@ public class TestActivity extends AppCompatActivity {
                     Bundle bundle = new Bundle();
                     MyAdapter a = (MyAdapter) recyclerView.getAdapter();
                     bundle.putStringArray("event_info", a.getDatasetItem(position));
+                    bundle.putString("list_title", EventEntry.TABLE_NAME);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }

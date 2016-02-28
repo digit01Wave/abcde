@@ -62,6 +62,15 @@
         android:layout_centerHorizontal="true"
         android:onClick="goKrumbsActivity"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Watch Later"
+        android:id="@+id/watch_later_list_button"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/kcapturebutton"
+        android:layout_centerHorizontal="true"
+        android:onClick="goWatchLaterListActivity"/>
 
 
 </RelativeLayout>

@@ -20,6 +20,8 @@ import java.util.Date;
 
 public class EventListActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
+    MySQLiteHelper controller = new MySQLiteHelper(this, null);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,29 +47,29 @@ public class EventListActivity extends AppCompatActivity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //get database
-        MySQLiteHelper controller = new MySQLiteHelper(this, null);
-
 
         String[][] myDataset = controller.getAllEventStrings();
 
-        MyAdapter mAdapter = new MyAdapter(myDataset);
-        mRecyclerView.setAdapter(mAdapter);
+        //if not empty
+        if(myDataset[0].length != 0){
+            MyAdapter mAdapter = new MyAdapter(myDataset);
+            mRecyclerView.setAdapter(mAdapter);
 
-        //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
-        //to solve recycler view's onclick problem
-        ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                Intent intent = new Intent(v.getContext(), EventViewActivity.class);
-                Bundle bundle = new Bundle();
-                MyAdapter a = (MyAdapter) recyclerView.getAdapter();
-                bundle.putStringArray("event_info", a.getDatasetItem(position));
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-
+            //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
+            //to solve recycler view's onclick problem
+            ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                @Override
+                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                    Intent intent = new Intent(v.getContext(), EventViewActivity.class);
+                    Bundle bundle = new Bundle();
+                    MyAdapter a = (MyAdapter) recyclerView.getAdapter();
+                    bundle.putStringArray("event_info", a.getDatasetItem(position));
+                    bundle.putString("list_title", EventEntry.TABLE_NAME);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
+        }
 
     }
 

@@ -8,12 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import com.example.jessica.myuci.FeedReaderContract.WLEntry;
 
 public class EventViewActivity extends AppCompatActivity {
-    ProgressDialog prgDialog;
-    String[] event_info;
-
+    private ProgressDialog prgDialog;
+    private MySQLiteHelper controller = new MySQLiteHelper(this, null);
+    private String[] event_info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +35,6 @@ public class EventViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //get event items
-        Bundle extras = getIntent().getExtras();
-        event_info = extras.getStringArray("event_info");
         prgDialog = new ProgressDialog(this);
         prgDialog.setMessage("Getting full event data. Please wait...");
         prgDialog.setCancelable(false);
@@ -64,7 +64,8 @@ public class EventViewActivity extends AppCompatActivity {
     }
 
     private void createEventView() {
-
+        Bundle extras = getIntent().getExtras();
+        event_info = extras.getStringArray("event_info");
         TextView image_link = (TextView) findViewById(R.id.image);
         TextView title = (TextView) findViewById(R.id.event_title);
         TextView hoster = (TextView) findViewById(R.id.event_hoster);
@@ -73,9 +74,17 @@ public class EventViewActivity extends AppCompatActivity {
         TextView location = (TextView) findViewById(R.id.event_location);
         TextView description = (TextView) findViewById(R.id.event_description);
         TextView link = (TextView) findViewById(R.id.event_link);
+        Button watch_later = (Button) findViewById(R.id.event_watch_later_button);
+
+        Log.d("MSG: ", "Creating Event View");
+        if(extras.getString("list_title").equals(FeedReaderContract.WLEntry.TABLE_NAME)){
+            watch_later.setVisibility(View.GONE);
+            Log.d("MSG: ", "Set Watch Later Visibility to Gone");
+        }
+
         //set textViews
         title.setText(event_info[1]);
-        if (event_info[2] == "None") { //host does not need to be there
+        if (event_info[2].equals("None")) { //host does not need to be there
             hoster.setVisibility(View.GONE);
         } else {
             hoster.setText(event_info[2]);
@@ -84,12 +93,12 @@ public class EventViewActivity extends AppCompatActivity {
         end_time.setText(event_info[4]);
         location.setText(event_info[7]);
         description.setText(event_info[8]);
-        if (event_info[9] == "None") { //link does not need to be there
+        if (event_info[9].equals("None")) { //link does not need to be there
             link.setVisibility(View.GONE);
         } else {
             link.setText(event_info[9]);
         }
-        if (event_info[10] == "None") { //image_link empty
+        if (event_info[10].equals("None")) { //image_link empty
             image_link.setText(event_info[10]);
         } else {
             image_link.setText(event_info[10]);
@@ -101,8 +110,9 @@ public class EventViewActivity extends AppCompatActivity {
 
     }
 
-    public void addToWatchLater(){
-        
+    public void addToWatchLater(View v){
+        //int event_id = Integer.parseInt(event_info[0]);
+        controller.addWatchLaterItem(WLEntry.GET_ID, event_info[0]);
     }
 
 }
