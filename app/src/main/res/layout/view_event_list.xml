@@ -5,12 +5,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/event_id"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextView
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -20,7 +14,8 @@
         android:paddingTop="6dip"
         android:textColor="#008000"
         android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="@string/title_placeholder"/>
 
     <TextView
         android:id="@+id/hoster"
@@ -32,7 +27,8 @@
         android:paddingTop="6dip"
         android:textColor="#008000"
         android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="@string/hoster_placeholder"/>
 
     <TextView
         android:id="@+id/start_time"
@@ -44,7 +40,8 @@
         android:paddingTop="6dip"
         android:textColor="#008000"
         android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="@string/start_time_placeholder"/>
 
     <TextView
         android:id="@+id/end_time"
@@ -56,32 +53,8 @@
         android:paddingTop="6dip"
         android:textColor="#008000"
         android:textSize="17sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/lat"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:paddingLeft="6dip"
-        android:paddingTop="6dip"
-        android:textColor="#008000"
-        android:textSize="17sp"
-        android:textStyle="bold" />
-
-
-    <TextView
-        android:id="@+id/lon"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:paddingLeft="6dip"
-        android:paddingTop="6dip"
-        android:textColor="#008000"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="@string/end_time_placeholder"/>
 
 
     <TextView
@@ -94,7 +67,8 @@
         android:paddingTop="6dip"
         android:textColor="#008000"
         android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="@string/location_placeholder"/>
 
     <TextView
         android:id="@+id/description"
@@ -106,19 +80,12 @@
         android:paddingTop="6dip"
         android:textColor="#008000"
         android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text = "@string/description_placeholder"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:singleLine="false"/>
 
-    <TextView
-        android:id="@+id/link"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:paddingLeft="6dip"
-        android:paddingTop="6dip"
-        android:textColor="#008000"
-        android:textSize="17sp"
-        android:textStyle="bold" />
 
     <!--creates black line in between each list item-->
     <LinearLayout

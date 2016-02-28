@@ -11,6 +11,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
+import com.example.jessica.myuci.FeedReaderContract.WLEntry;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -48,9 +51,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     EventEntry.COLUMN_NAME_LINK + TEXT_TYPE + COMMA_SEP +
                     EventEntry.COLUMN_NAME_IMAGE_LINK + TEXT_TYPE +
             " )";
+    private static final String SQL_CREATE_WATCH_LATER_TABLE =
+            "CREATE TABLE " + WLEntry.TABLE_NAME + " (" +
+                    WLEntry._ID + " INTEGER PRIMARY KEY," +
+                    WLEntry.COLUMN_NAME_USER_ID + INT_TYPE + COMMA_SEP +
+                    WLEntry.COLUMN_NAME_EVENT_ID + INT_TYPE +
+                    ")";
+
+    private static final String SQLITE_SELECT_UNSYNCED_WL = "SELECT  * FROM " + WLEntry.TABLE_NAME + " where "+WLEntry.COLUMN_NAME_UPDATE_STATUS +" = '"+"no"+"'";
 
     private static final String SQL_DELETE_EVENT_TABLE =
             "DROP TABLE IF EXISTS " + EventEntry.TABLE_NAME;
+    private static final String SQL_DELETE_WATCH_LATER_TABLE =
+            "DROP TABLE IF EXISTS " + WLEntry.TABLE_NAME;
 
     public MySQLiteHelper(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -60,17 +73,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // SQL statement to create event table
         db.execSQL(SQL_CREATE_EVENT_TABLE);
+        db.execSQL(SQL_CREATE_WATCH_LATER_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older books table if existed
         db.execSQL(SQL_DELETE_EVENT_TABLE);
+        db.execSQL(SQL_DELETE_WATCH_LATER_TABLE);
 
         // create fresh books table
         this.onCreate(db);
     }
 
+    //for testing purposes
     public void addEventItem(EventItem event){
         //for logging
         Log.d("MSG:", "addEventItem(event)"+event.toString());
@@ -148,6 +164,174 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+
+    public String[][] getAllEventStrings() {
+        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME;
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        int num_rows = cursor.getCount();
+        String[][] event_list = new String[num_rows][];
+        if (cursor.moveToFirst()) {
+            int index = 0;
+            do {
+                String[] event = {
+                        cursor.getString(1), //event_id
+                        cursor.getString(2), //title
+                        cursor.getString(3), //hoster
+                        cursor.getString(4), //start_time
+                        cursor.getString(5), //end_time
+                        cursor.getString(6), //lat
+                        cursor.getString(7), //lon
+                        cursor.getString(8), //location
+                        cursor.getString(9), //description
+                        cursor.getString(10), //link
+                        cursor.getString(11) //image_link
+                };
+                event_list[index] = event;
+
+                //since start_time and end_time are still in integer format, need to convert to datetime
+                SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
+                event_list[index][3] = ft.format(Long.parseLong(event_list[index][3]));
+                event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
+
+                index++;
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        Log.d("MSG:", "getAllEventStrings()");
+        return event_list;
+    }
+
+
+    public void deleteAllEvents(SQLiteDatabase db){
+        /*will delete all events in database*/
+        db.delete(EventEntry.TABLE_NAME, null, null);
+        Log.d("MSG: ", "All events have been deleted");
+    }
+        /*
+    ################################################################################################
+
+    BELOW ARE POSSIBLE METHODS FOR WATCH LATER LIST
+
+    ################################################################################################
+    */
+    public void addWatchLaterItem(String[] event_cols){
+    /*given array of strings of all event properties, will create watch later item
+    * in the form [id, title, hoster, start_time, end_time, lat, lon, location, description, link]
+    *
+    * milesecond_format means that the start and end_time is in miliseconds (can be converted to
+    * int. If set to false instead, then it means it is in the sql format 'YYYY-MM-DD HH:MM:SS'
+    *
+    * */
+
+        // reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //create ContentValues to add key "column"/value
+        ContentValues values = new ContentValues();
+        values.put(WLEntry.COLUMN_NAME_USER_ID, event_cols[0]);
+        values.put(WLEntry.COLUMN_NAME_EVENT_ID, event_cols[1]);
+
+        // insert
+        db.insert(WLEntry.TABLE_NAME, // table
+                null, //nullColumnHack
+                values); // key/value -> keys = column names/ values = column values
+
+        // close
+        db.close();
+        Log.d("MSG: ", "AddWatchLaterEventStr");
+    }
+
+    public String[][] getAllWatchLater() {
+        String selectQuery = "SELECT  * FROM " + WLEntry.TABLE_NAME;
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        int num_rows = cursor.getCount();
+        String[][] event_list = new String[num_rows][];
+        if (cursor.moveToFirst()) {
+            int index = 0;
+            do {
+                String[] event = {
+                        cursor.getString(1), //user_id
+                        cursor.getString(2) //event_id
+                };
+                event_list[index] = event;
+                index++;
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        Log.d("MSG:", "getAllWatchLater()");
+        return event_list;
+    }
+
+    /**
+     * Compose JSON out of SQLite records
+     */
+    public String composeJSONfromWatchLaterSQLite(){
+        ArrayList<HashMap<String, String>> wordList;
+        wordList = new ArrayList<HashMap<String, String>>();
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(SQLITE_SELECT_UNSYNCED_WL, null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("user_id", cursor.getString(0));
+                map.put("event_id", cursor.getString(1));
+                wordList.add(map);
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        Gson gson = new GsonBuilder().create();
+        //Use GSON to serialize Array List to JSON
+        return gson.toJson(wordList);
+    }
+
+    /**
+     * Get Sync status of SQLite
+     */
+    public String getWatchLaterSyncStatus(){
+        String msg = null;
+        if(this.dbWatchLaterSyncCount() == 0){
+            msg = "SQLite and Remote MySQL DBs are in Sync!";
+        }else{
+            msg = "DB Sync needed";
+        }
+        return msg;
+    }
+
+    /**
+     * Get SQLite records that are yet to be Synced
+     */
+    public int dbWatchLaterSyncCount(){
+        int count = 0;
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(SQLITE_SELECT_UNSYNCED_WL, null);
+        count = cursor.getCount();
+        database.close();
+        return count;
+    }
+
+    /**
+     * Update Sync status against each User ID
+     */
+    public void updateWatchLaterSyncStatus(String user_id, String event_id, String status){
+        SQLiteDatabase database = this.getWritableDatabase();
+        String updateQuery = "Update users set "+WLEntry.COLUMN_NAME_UPDATE_STATUS+" = '"+ status +
+                "' where " + WLEntry.COLUMN_NAME_USER_ID + "= '"+ user_id +"' AND "
+                + WLEntry.COLUMN_NAME_EVENT_ID + " = '" + event_id +"'";
+        Log.d("MSG: ", "query = " + updateQuery);
+        database.execSQL(updateQuery);
+        database.close();
+    }
+
+    /*
+    ################################################################################################
+
+    BELOW ARE POSSIBLE OTHER METHODS. UNKNOWN IF WILL BE USEFUL
+
+    ################################################################################################
+    */
+
     public EventItem getEventItem(int id) throws java.text.ParseException{
 
         // get reference to readable DB
@@ -190,6 +374,27 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return e;
     }
 
+    public boolean deleteEventItem(int id){
+        boolean result = false;
+
+        //create query
+        String query = "Select * FROM " + EventEntry.TABLE_NAME + " WHERE "
+                + EventEntry.COLUMN_NAME_EVENT_ID + " = "+ id;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(EventEntry.TABLE_NAME,
+                EventEntry.COLUMN_NAME_EVENT_ID + " = ?", //selection
+                new String[] { String.valueOf(id)}
+        );
+        db.close();
+
+        //log
+        Log.d("MSG: ", "deleteEventItem id=" + Integer.toString(id));
+
+        return result;
+    }
+
     public ArrayList<EventItem> getAllEvents() {
         ArrayList<EventItem> events = new ArrayList<EventItem>();
 
@@ -228,70 +433,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // return events
         return events;
-    }
-
-    public String[][] getAllEventStrings() {
-        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME;
-        SQLiteDatabase database = this.getWritableDatabase();
-        Cursor cursor = database.rawQuery(selectQuery, null);
-        int num_rows = cursor.getCount();
-        String[][] event_list = new String[num_rows][];
-        if (cursor.moveToFirst()) {
-            int index = 0;
-            do {
-                String[] event = {
-                        cursor.getString(1), //event_id
-                        cursor.getString(2), //title
-                        cursor.getString(3), //hoster
-                        cursor.getString(4), //start_time
-                        cursor.getString(5), //end_time
-                        cursor.getString(6), //lat
-                        cursor.getString(7), //lon
-                        cursor.getString(8), //location
-                        cursor.getString(9), //description
-                        cursor.getString(10), //link
-                        cursor.getString(11) //image_link
-                };
-                event_list[index] = event;
-
-                //since start_time and end_time are still in integer format, need to convert to datetime
-                SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
-                event_list[index][3] = ft.format(Long.parseLong(event_list[index][3]));
-                event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
-
-                index++;
-            } while (cursor.moveToNext());
-        }
-        database.close();
-        Log.d("MSG:", "getAllEventStrings()");
-        return event_list;
-    }
-
-    public boolean deleteEventItem(int id){
-        boolean result = false;
-
-        //create query
-        String query = "Select * FROM " + EventEntry.TABLE_NAME + " WHERE "
-                + EventEntry.COLUMN_NAME_EVENT_ID + " = "+ id;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        db.delete(EventEntry.TABLE_NAME,
-                EventEntry.COLUMN_NAME_EVENT_ID + " = ?", //selection
-                new String[] { String.valueOf(id)}
-        );
-        db.close();
-
-        //log
-        Log.d("MSG: ", "deleteEventItem id=" + Integer.toString(id));
-
-        return result;
-    }
-
-    public void deleteAllEvents(SQLiteDatabase db){
-        /*will delete all events in database*/
-        db.delete(EventEntry.TABLE_NAME, null, null);
-        Log.d("MSG: ", "All events have been deleted");
     }
 
 

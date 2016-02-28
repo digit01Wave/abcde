@@ -68,7 +68,8 @@ public class EventViewActivity extends AppCompatActivity {
         TextView image_link = (TextView) findViewById(R.id.image);
         TextView title = (TextView) findViewById(R.id.event_title);
         TextView hoster = (TextView) findViewById(R.id.event_hoster);
-        TextView time_span = (TextView) findViewById(R.id.event_time_span);
+        TextView start_time = (TextView) findViewById(R.id.event_start_time);
+        TextView end_time = (TextView) findViewById(R.id.event_end_time);
         TextView location = (TextView) findViewById(R.id.event_location);
         TextView description = (TextView) findViewById(R.id.event_description);
         TextView link = (TextView) findViewById(R.id.event_link);
@@ -79,7 +80,8 @@ public class EventViewActivity extends AppCompatActivity {
         } else {
             hoster.setText(event_info[2]);
         }
-    time_span.setText(event_info[3] + " - " + event_info[4]);
+        start_time.setText(event_info[3]);
+        end_time.setText(event_info[4]);
         location.setText(event_info[7]);
         description.setText(event_info[8]);
         if (event_info[9] == "None") { //link does not need to be there

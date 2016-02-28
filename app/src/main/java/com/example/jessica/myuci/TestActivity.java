@@ -40,7 +40,6 @@ import cz.msebera.android.httpclient.Header;
 
 public class TestActivity extends AppCompatActivity {
     final static String URL_GET_EVENT = "http://10.0.2.2/mysqlitesync/getevents.php";
-    final static String URL_UPDATE_SYNCS = "http://10.0.2.2/mysqlsqlitesync/updatesyncsts.php";
 
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
