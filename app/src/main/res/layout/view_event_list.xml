@@ -87,6 +87,7 @@
         android:singleLine="false"/>
 
 
+
     <!--creates black line in between each list item-->
     <LinearLayout
         android:layout_width="fill_parent"

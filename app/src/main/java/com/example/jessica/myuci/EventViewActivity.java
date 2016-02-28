@@ -101,4 +101,8 @@ public class EventViewActivity extends AppCompatActivity {
 
     }
 
+    public void addToWatchLater(){
+        
+    }
+
 }

@@ -11,9 +11,19 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.jessica.myuci.EventViewActivity"
     tools:showIn="@layout/activity_event_view">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add To Watch Later"
+        android:id="@+id/event_watch_later_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:onClick="addToWatchLater"/>
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:id="@+id/event_scroll_view"
+        android:layout_below="@id/event_watch_later_button">
         <RelativeLayout
             android:id="@+id/form_layout"
             android:layout_width="fill_parent"
@@ -173,5 +183,6 @@
                 android:layout_below="@id/event_description" />
         </RelativeLayout>
     </ScrollView>
+
 </RelativeLayout>
 
