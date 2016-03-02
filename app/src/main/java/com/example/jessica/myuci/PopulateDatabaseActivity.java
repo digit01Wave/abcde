@@ -14,7 +14,7 @@ import android.widget.Button;
 
 import java.util.Date;
 
-public class PopulateDatabaseActivity extends AppCompatActivity {
+public class PopulateDatabaseActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

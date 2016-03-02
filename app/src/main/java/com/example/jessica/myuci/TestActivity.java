@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
+import com.example.jessica.myuci.FeedReaderContract.ServerEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
@@ -38,8 +39,8 @@ import java.util.Calendar;
 import cz.msebera.android.httpclient.Header;
 
 
-public class TestActivity extends AppCompatActivity {
-    final static String URL_GET_EVENT = "http://10.0.2.2/mysqlitesync/getevents.php";
+public class TestActivity extends BaseActivity {
+
 
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
@@ -121,6 +122,7 @@ public class TestActivity extends AppCompatActivity {
     // Options Menu (ActionBar Menu)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_my, menu);
         return true;
@@ -149,7 +151,7 @@ public class TestActivity extends AppCompatActivity {
         // Show ProgressBar
         prgDialog.show();
         // Make Http call to getusers.php
-        client.get(URL_GET_EVENT, params, new TextHttpResponseHandler() {
+        client.get(ServerEntry.URL_GET_EVENT, params, new TextHttpResponseHandler() {
 
             @Override
             public void onStart() {

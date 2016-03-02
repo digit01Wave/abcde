@@ -132,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(),
                                     "Successfully created user acount, now log in",
                                     Toast.LENGTH_LONG).show();
+
                             Log.d("login", "Successfully created user account with uid: " + result.get("uid"));
                         }
 

@@ -1,23 +1,14 @@
 <resources>
     <string name="app_name">MyUCI</string>
+
+    <!--MENU LABELS-->
+    <string name="action_logout">Logout</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_homepage">HomepageActivity</string>
-
-    <string name="edit_message">Enter a message"</string>
-    <string name="button_send">Send</string>
-    <string name="title_activity_display_message">MyMessage</string>
-
-
     <string name="action_favorite">Favorite Action</string>
     <string name="action_search">Search</string>
-    <string name="share">Share</string>
+    <string name="action_share">Share</string>
 
-    <string name="user_name">Username</string>
-    <string name="login">Login</string>
-    <string name="pass_word">Password</string>
-    <string name="clear">Quit</string>
-    <string name="attempts_left">Attempts Left: </string>
-
+    <!--ACTIVITY TITLES-->
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_event_list">EventListActivity</string>
     <string name="title_activity_navigator">NavigatorActivity</string>
@@ -25,9 +16,18 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_event_view">EventViewActivity</string>
     <string name="title_activity_krumbs">KrumbsActivity</string>
+
+    <!--KRUMBS LABELS-->
     <string name="krumbs_button_label">Krumbs Capture</string>
     <string name="krumbssdk_app_id">zmmzAIzwM65XahnKb1lmD1ij7z4J2bToqRRIuGDH</string>
     <string name="krumbssdk_client_key">bJI7wx5HafWH9x6icjJ9RtMQEZf4XxpoOtX6TJwm</string>
+
+    <!--LOGIN LABELS-->
+    <string name="user_name">Username</string>
+    <string name="login">Login</string>
+    <string name="pass_word">Password</string>
+    <string name="clear">Quit</string>
+    <string name="attempts_left">Attempts Left: </string>
 
     <!--CATEGORY LABELS-->
     <string name="start_time_title">Start Time: </string>
@@ -44,6 +44,10 @@
     <string name="link_placeholder">No link provided.</string>
     <string name="image_placeholder">No image provided.</string>
     <string name="title_activity_watch_later_list">WatchLaterListActivity</string>
+
+    <!--BUTTON LABELS-->
+    <string name="add_to_watch_later">Add to Watch Later</string>
+    <string name="delete_from_watch_later">Remove from Watch Later</string>
 
 
 </resources>

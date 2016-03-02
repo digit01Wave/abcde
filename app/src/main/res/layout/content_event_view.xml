@@ -14,11 +14,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add To Watch Later"
         android:id="@+id/event_watch_later_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:onClick="addToWatchLater"/>
+        android:layout_marginBottom="30dp" />
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

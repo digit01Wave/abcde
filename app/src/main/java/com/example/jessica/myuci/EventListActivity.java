@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
 
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class EventListActivity extends AppCompatActivity {
+public class EventListActivity extends BaseActivity {
     RecyclerView mRecyclerView;
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
@@ -47,11 +49,14 @@ public class EventListActivity extends AppCompatActivity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        //get access to writable database
+        SQLiteDatabase db = controller.getWritableDatabase();
+        //Query for items
+        Cursor event_cursor = db.rawQuery("SELECT  * FROM "+EventEntry.TABLE_NAME, null);
 
-        String[][] myDataset = controller.getAllEventStrings();
-
-        //if not empty
-        if(myDataset[0].length != 0){
+        // If events exist in SQLite DB
+        if (event_cursor.getColumnCount() != 0) {
+            String[][] myDataset = controller.getAllEventStrings();
             MyAdapter mAdapter = new MyAdapter(myDataset);
             mRecyclerView.setAdapter(mAdapter);
 
@@ -72,22 +77,6 @@ public class EventListActivity extends AppCompatActivity {
         }
 
     }
-
-    //for debugging purposes
-    public void printDataSet(String[][] dataset){
-        Log.d("MSG: ", "DATASET PRINT START_____________________________________");
-        StringBuilder sb = new StringBuilder();
-        for(String[] arr: dataset){
-            for(String col_item: arr){
-                sb.append(col_item);
-                sb.append(", ");
-            }
-            sb.append("\n");
-        }
-        Log.d("MSG: ", sb.toString());
-        Log.d("MSG: ", "DATASET PRINT END_____________________________________");
-    }
-
 
 
 }

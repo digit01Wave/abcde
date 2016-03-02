@@ -1,8 +1,5 @@
 package com.example.jessica.myuci;
 
-/**
- * Created by Jessica on 2/9/2016.
- */
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,17 +9,15 @@ import android.util.Log;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
 import com.example.jessica.myuci.FeedReaderContract.WLEntry;
+import com.example.jessica.myuci.FeedReaderContract.ServerEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
@@ -58,12 +53,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     "PRIMARY KEY (" + WLEntry.COLUMN_NAME_USER_ID + ", " + WLEntry.COLUMN_NAME_EVENT_ID + ")" +
                     ")";
 
-    private static final String SQLITE_SELECT_UNSYNCED_WL = "SELECT  * FROM " + WLEntry.TABLE_NAME + " where "+WLEntry.COLUMN_NAME_UPDATE_STATUS +" = '"+"no"+"'";
+    private static final String SQLITE_SELECT_UNSYNCED_WL = "SELECT  * FROM " + WLEntry.TABLE_NAME +
+            " where "+WLEntry.COLUMN_NAME_UPDATE_STATUS +" = '"+ServerEntry.UPDATE_STATUS_UNSYNCED+"'";
+
+    private static final String SQL_CREATE_WATCH_LATER_DELETE_TABLE =
+            "CREATE TABLE " + WLEntry.TO_DELETE_TABLE_NAME + " (" +
+                    WLEntry.COLUMN_NAME_USER_ID + TEXT_TYPE + COMMA_SEP +
+                    WLEntry.COLUMN_NAME_EVENT_ID + INT_TYPE + COMMA_SEP +
+                    "PRIMARY KEY (" + WLEntry.COLUMN_NAME_USER_ID + ", " + WLEntry.COLUMN_NAME_EVENT_ID + ")" +
+                    ")";
+
 
     private static final String SQL_DELETE_EVENT_TABLE =
             "DROP TABLE IF EXISTS " + EventEntry.TABLE_NAME;
     private static final String SQL_DELETE_WATCH_LATER_TABLE =
             "DROP TABLE IF EXISTS " + WLEntry.TABLE_NAME;
+    private static final String SQL_DELETE_WATCH_LATER_DELETE_TABLE =
+            "DROP TABLE IF EXISTS "+ WLEntry.TO_DELETE_TABLE_NAME;
+
 
     public MySQLiteHelper(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -74,6 +81,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // SQL statement to create event table
         db.execSQL(SQL_CREATE_EVENT_TABLE);
         db.execSQL(SQL_CREATE_WATCH_LATER_TABLE);
+        db.execSQL(SQL_CREATE_WATCH_LATER_DELETE_TABLE);
         Log.d("MSG: ", "Created Event and Watch Later Tables");
     }
 
@@ -82,6 +90,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Drop older books table if existed
         db.execSQL(SQL_DELETE_EVENT_TABLE);
         db.execSQL(SQL_DELETE_WATCH_LATER_TABLE);
+        db.execSQL(SQL_CREATE_WATCH_LATER_DELETE_TABLE);
         Log.d("MSG: ", "Upgraded Event and Watch Later Tables");
 
         // create fresh tables
@@ -128,7 +137,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         *
         * milesecond_format means that the start and end_time is in miliseconds (can be converted to
         * int. If set to false instead, then it means it is in the sql format 'YYYY-MM-DD HH:MM:SS'
-        *
         * */
         Log.d("MSG: ", "AddEventItemStr");
         // reference to writable DB
@@ -145,7 +153,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             values.put(EventEntry.COLUMN_NAME_END_TIME, Integer.parseInt(event_cols[4]));
         }
         else{
-            DateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DateFormat date_format = new SimpleDateFormat(EventEntry.DATE_FORMAT);
             Date start_time = date_format.parse(event_cols[3]);
             Date end_time = date_format.parse(event_cols[4]);
             values.put(EventEntry.COLUMN_NAME_START_TIME, start_time.getTime());
@@ -198,13 +206,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 event_list[index] = event;
 
                 //since start_time and end_time are still in integer format, need to convert to datetime
-                SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
+                SimpleDateFormat ft = new SimpleDateFormat (EventEntry.DATE_FORMAT);
                 event_list[index][3] = ft.format(Long.parseLong(event_list[index][3]));
                 event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
 
                 index++;
             } while (cursor.moveToNext());
         }
+        cursor.close();
         database.close();
         Log.d("MSG:", "getAllEventStrings()");
         return event_list;
@@ -224,11 +233,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     ################################################################################################
     */
     public void addWatchLaterItem(String user_id, String event_id){
-    /*given array of strings of all event properties, will create watch later item
-    * in the form [id, title, hoster, start_time, end_time, lat, lon, location, description, link]
-    *
-    * milesecond_format means that the start and end_time is in miliseconds (can be converted to
-    * int. If set to false instead, then it means it is in the sql format 'YYYY-MM-DD HH:MM:SS'
+    /* adds user_id, event_id to watch_later_list table in SQLite
     *
     * */
 
@@ -239,7 +244,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(WLEntry.COLUMN_NAME_USER_ID, user_id);
         values.put(WLEntry.COLUMN_NAME_EVENT_ID, event_id);
-        values.put(WLEntry.COLUMN_NAME_UPDATE_STATUS, "no");
+        values.put(WLEntry.COLUMN_NAME_UPDATE_STATUS, ServerEntry.UPDATE_STATUS_UNSYNCED);
 
         // insert
         db.insert(WLEntry.TABLE_NAME, // table
@@ -249,6 +254,52 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // close
         db.close();
         Log.d("MSG: ", "AddWatchLaterEvent(" + user_id + ", " + event_id + ")");
+    }
+
+    public void deleteWatchLaterItem(String user_id, String event_id){
+        /*deletes item from watch_later_list sqlLite table*/
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //add to WLtoDelete if entry synced in order to sync with database later
+        String selectQuery = "SELECT  * FROM " + WLEntry.TABLE_NAME + " WHERE " + WLEntry.COLUMN_NAME_USER_ID +
+                " = '" + user_id +"' AND " + WLEntry.COLUMN_NAME_EVENT_ID + " = " + event_id;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        //if there are synced items to be deleted
+        if(cursor.moveToFirst()){
+            //create ContentValues to add key "column"/value
+            ContentValues values = new ContentValues();
+            values.put(WLEntry.COLUMN_NAME_USER_ID, user_id);
+            values.put(WLEntry.COLUMN_NAME_EVENT_ID, event_id);
+
+            // insert
+            db.insert(WLEntry.TO_DELETE_TABLE_NAME, // table
+                    null, //nullColumnHack
+                    values); // key/value -> keys = column names/ values = column values
+        }
+        cursor.close();
+
+        //delete from database
+        db.delete(WLEntry.TABLE_NAME, WLEntry.COLUMN_NAME_USER_ID + " = '" + user_id + "' AND " +
+                WLEntry.COLUMN_NAME_EVENT_ID + " = " + event_id, null);
+        db.close();
+    }
+
+    /*
+    * Returns whether or not the watch later list has that item
+    * */
+    public boolean hasWLItem(String user_id, String event_id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT  * FROM " + WLEntry.TABLE_NAME + " WHERE " + WLEntry.COLUMN_NAME_USER_ID +
+                " = '" + user_id +"' AND " + WLEntry.COLUMN_NAME_EVENT_ID + " = " + event_id;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Log.d("MSG: ", "hasWLItem " + selectQuery);
+        if(cursor.moveToFirst()){
+            return true;
+        }
+        return false;
+
     }
 
     public String[][] getAllWatchLaterEvents(String user_id) {
@@ -279,43 +330,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 event_list[index] = event;
 
                 //since start_time and end_time are still in integer format, need to convert to datetime
-                SimpleDateFormat ft = new SimpleDateFormat ("yyyy.MM.dd hh:mm:ss");
+                SimpleDateFormat ft = new SimpleDateFormat (EventEntry.DATE_FORMAT);
                 event_list[index][3] = ft.format(Long.parseLong(event_list[index][3]));
                 event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
 
                 index++;
             } while (cursor.moveToNext());
         }
+        cursor.close();
         database.close();
         Log.d("MSG:", selectQuery);
         return event_list;
     }
 
-    /*
-    * gets only the user_id and event_ids in watch later list
-    * */
-    public String[][] getSQLiteWatchLaterEvents(String user_id){
-        String selectQuery = "SELECT  * FROM " + WLEntry.TABLE_NAME + " WHERE " + WLEntry.COLUMN_NAME_USER_ID +
-                " = '" + user_id +"'";
-        SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery(selectQuery, null);
-        int num_rows = cursor.getCount();
-        String[][] watch_later_list = new String[num_rows][];
-        if (cursor.moveToFirst()) {
-            int index = 0;
-            do {
-                String[] event = {
-                        user_id,
-                        cursor.getString(2), //event_id
-                };
-                watch_later_list[index] = event;
-                index++;
-            } while (cursor.moveToNext());
-        }
-        database.close();
-        Log.d("MSG:", "getAllSQLiteWatchLater()");
-        return watch_later_list;
-    }
 
     /**
      * Compose JSON out of SQLite records
@@ -325,56 +352,77 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         wordList = new ArrayList<HashMap<String, String>>();
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(SQLITE_SELECT_UNSYNCED_WL, null);
+
+        //add all entries to be added
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put("user_id", cursor.getString(0));
-                map.put("event_id", cursor.getString(1));
+                map.put(WLEntry.COLUMN_NAME_USER_ID, cursor.getString(0));
+                map.put(WLEntry.COLUMN_NAME_EVENT_ID, cursor.getString(1));
+                map.put(ServerEntry.UPDATE_ACTION_TITLE, ServerEntry.UPDATE_ACTION_ADD);
                 wordList.add(map);
             } while (cursor.moveToNext());
         }
+
+        //add all entries to be deleted
+        cursor = database.rawQuery("SELECT * FROM " + WLEntry.TO_DELETE_TABLE_NAME, null);
+        if(cursor.moveToFirst()){
+            HashMap<String, String> map = new HashMap<String, String>();
+            map.put(WLEntry.COLUMN_NAME_USER_ID, cursor.getString(0));
+            map.put(WLEntry.COLUMN_NAME_EVENT_ID, cursor.getString(1));
+            map.put(ServerEntry.UPDATE_ACTION_TITLE, ServerEntry.UPDATE_ACTION_DELETE);
+            wordList.add(map);
+        }
+
+        cursor.close();
         database.close();
-        Gson gson = new GsonBuilder().create();
+
         //Use GSON to serialize Array List to JSON
+        Gson gson = new GsonBuilder().create();
         return gson.toJson(wordList);
     }
 
-    /**
-     * Get Sync status of SQLite
-     */
-    public String getWatchLaterSyncStatus(){
-        String msg = null;
-        if(this.dbWatchLaterSyncCount() == 0){
-            msg = "SQLite and Remote MySQL DBs are in Sync!";
-        }else{
-            msg = "DB Sync needed";
-        }
-        return msg;
-    }
 
     /**
      * Get SQLite records that are yet to be Synced
      */
     public int dbWatchLaterSyncCount(){
-        int count = 0;
-        SQLiteDatabase database = this.getWritableDatabase();
-        Cursor cursor = database.rawQuery(SQLITE_SELECT_UNSYNCED_WL, null);
-        count = cursor.getCount();
-        database.close();
+        //count all the newly added items
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(SQLITE_SELECT_UNSYNCED_WL, null);
+        int count = cursor.getCount();
+
+        //adds newly deleted items
+        cursor = db.rawQuery("SELECT * FROM " + WLEntry.TO_DELETE_TABLE_NAME, null);
+        count += cursor.getCount();
+
+        //clean and return
+        cursor.close();
+        db.close();
         return count;
     }
 
     /**
-     * Update Sync status against each User ID
+     * Update Sync status against each user and event id
+     * action_completed is either delete or add
+     * sync status is the status the server sponded with
      */
-    public void updateWatchLaterSyncStatus(String user_id, String event_id, String status){
-        SQLiteDatabase database = this.getWritableDatabase();
-        String updateQuery = "Update " + WLEntry.TABLE_NAME + " set "+WLEntry.COLUMN_NAME_UPDATE_STATUS+" = '"+ status +
-                "' where " + WLEntry.COLUMN_NAME_USER_ID + "= '"+ user_id +"' AND "
-                + WLEntry.COLUMN_NAME_EVENT_ID + " = '" + event_id +"'";
-        Log.d("MSG: ", "query = " + updateQuery);
-        database.execSQL(updateQuery);
-        database.close();
+    public void updateWatchLaterSyncStatus(String user_id, String event_id, String action_completed, String status){
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(action_completed.equals(ServerEntry.UPDATE_ACTION_ADD)){ //added
+            String updateQuery = "Update " + WLEntry.TABLE_NAME + " set "+WLEntry.COLUMN_NAME_UPDATE_STATUS+" = '"+ status +
+                    "' where " + WLEntry.COLUMN_NAME_USER_ID + "= '"+ user_id +"' AND "
+                    + WLEntry.COLUMN_NAME_EVENT_ID + " = '" + event_id +"'";
+            db.execSQL(updateQuery);
+            Log.d("MSG: ", "query = " + updateQuery);
+        }else if(action_completed.equals(ServerEntry.UPDATE_ACTION_DELETE) &&
+                status.equals(ServerEntry.UPDATE_STATUS_SYNCED)){ //deleted successfully
+            //delete from toDelete database
+            db.delete(WLEntry.TO_DELETE_TABLE_NAME, WLEntry.COLUMN_NAME_USER_ID + " = '" + user_id +
+                    "' AND " + WLEntry.COLUMN_NAME_EVENT_ID + " = " + event_id, null);
+        }
+
+        db.close();
     }
 
     /*
@@ -404,7 +452,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             e.setTitle(cursor.getString(1));
             e.setHoster(cursor.getString(2));
 
-            SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat date_format = new SimpleDateFormat(EventEntry.DATE_FORMAT);
             e.setStartTime(new Date(cursor.getInt(3)));
             e.setEndTime(new Date(cursor.getInt(4)));
             e.setLatLon(Double.parseDouble(cursor.getString(5)),
@@ -428,7 +476,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public boolean deleteEventItem(int id){
-        boolean result = false;
 
         //create query
         String query = "Select * FROM " + EventEntry.TABLE_NAME + " WHERE "
@@ -445,7 +492,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         //log
         Log.d("MSG: ", "deleteEventItem id=" + Integer.toString(id));
 
-        return result;
+        return false;
     }
 
     public ArrayList<EventItem> getAllEvents() {

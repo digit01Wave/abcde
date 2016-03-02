@@ -46,7 +46,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             end_time = (TextView) view.findViewById(R.id.end_time);
             location = (TextView) view.findViewById(R.id.location);
             description = (TextView) view.findViewById(R.id.description);
-            Log.d("MSG:", "Success: Created ViewHolder");
         }
     }
 

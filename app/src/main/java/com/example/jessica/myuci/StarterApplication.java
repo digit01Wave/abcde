@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.firebase.client.Firebase;
+
 import java.net.URL;
 
 import io.krumbs.sdk.KIntentPanelConfiguration;
@@ -30,7 +32,8 @@ public class StarterApplication extends Application {
     public void onCreate() {
         Log.d("MSG: ", "Initializing Starter Application");
         super.onCreate();
-
+        Log.d("login: ", "set firebase context");
+        Firebase.setAndroidContext(this);
         //String appID = getMetadata(getApplicationContext(), KRUMBS_SDK_APPLICATION_ID);
         //String clientKey = getMetadata(getApplicationContext(), KRUMBS_SDK_CLIENT_KEY);
         String appID = KRUMBS_SDK_APPLICATION_ID;
