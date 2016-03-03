@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import com.example.jessica.myuci.FeedReaderContract.WLEntry;
+import com.example.jessica.myuci.FeedReaderContract.UserInfo;
 
 public class EventViewActivity extends BaseActivity {
     private ProgressDialog prgDialog;
@@ -35,6 +35,8 @@ public class EventViewActivity extends BaseActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //user_id = getSharedPreferences("loginPrefs", MODE_PRIVATE).getString("curUser", "");
 
         //get event items
         prgDialog = new ProgressDialog(this);
@@ -75,41 +77,49 @@ public class EventViewActivity extends BaseActivity {
 
                 //set textViews
                 title.setText(event_info[1]);
-                if (event_info[2].equals("None")) { //host does not need to be there
+                if (event_info[2] == null) { //host does not need to be there
                     hoster.setVisibility(View.GONE);
                 } else {
                     hoster.setText(event_info[2]);
                 }
                 start_time.setText(event_info[3]);
-                end_time.setText(event_info[4]);
+                if (event_info[4] == null) { //end time does not need to be there
+                    end_time.setVisibility(View.GONE);
+                } else {
+                    end_time.setText(event_info[4]);
+                }
                 location.setText(event_info[7]);
-                description.setText(event_info[8]);
-                if (event_info[9].equals("None")) { //link does not need to be there
+                if (event_info[8] != null) {
+                    description.setText(event_info[8]);
+                }
+                if (event_info[9] == null) { //link does not need to be there
                     link.setVisibility(View.GONE);
                 } else {
                     link.setText(event_info[9]);
                 }
-                if (event_info[10].equals("None")) { //image_link empty
-                    image_link.setText(event_info[10]);
+                if (event_info[10] == null) { //image_link empty
+                    //make sure you do something here
                 } else {
                     image_link.setText(event_info[10]);
                 }
 
                 //button
-                if (controller.hasWLItem(WLEntry.GET_ID, event_info[0])) {
+                if (controller.hasWLItem(UserInfo.USER_ID, event_info[0])) {
                     WLButton.setText(getString(R.string.delete_from_watch_later));
                 } else {
                     WLButton.setText(getString(R.string.add_to_watch_later));
                 }
+
+
                 WLButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         if (WLButton.getText().equals("Add to Watch Later")) {
-                            controller.addWatchLaterItem(WLEntry.GET_ID, event_info[0]);
+                            controller.addWatchLaterItem(UserInfo.USER_ID, event_info[0]);
                             //toggle view
                             WLButton.setText(getString(R.string.delete_from_watch_later));
 
                         } else {
-                            controller.deleteWatchLaterItem(WLEntry.GET_ID, event_info[0]);
+                            controller.deleteWatchLaterItem(UserInfo.USER_ID, event_info[0]);
                             WLButton.setText(getString(R.string.add_to_watch_later));
                         }
                     }
@@ -117,7 +127,7 @@ public class EventViewActivity extends BaseActivity {
 
                 Log.d("MSG: ", "EventViewActivity Completed");
                 try{
-                    prgDialog.dismiss();
+                    prgDialog.hide();
                 }catch(Exception ex){
                     Log.i("---", "Exception in thread");
                 }

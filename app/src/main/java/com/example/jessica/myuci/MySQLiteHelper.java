@@ -146,28 +146,45 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(EventEntry.COLUMN_NAME_EVENT_ID, event_cols[0]);
         values.put(EventEntry.COLUMN_NAME_TITLE, event_cols[1]);
-        values.put(EventEntry.COLUMN_NAME_HOSTER, event_cols[2]);
-
+        if(!(event_cols[2].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_HOSTER, event_cols[2]);
+        }
         if(milisecond_format){ //is in milisecond format
             values.put(EventEntry.COLUMN_NAME_START_TIME, Integer.parseInt(event_cols[3]));
-            values.put(EventEntry.COLUMN_NAME_END_TIME, Integer.parseInt(event_cols[4]));
+            if(!(event_cols[4].equals("null"))) {
+                values.put(EventEntry.COLUMN_NAME_END_TIME, Integer.parseInt(event_cols[4]));
+            }
         }
         else{
             DateFormat date_format = new SimpleDateFormat(EventEntry.DATE_FORMAT);
             Date start_time = date_format.parse(event_cols[3]);
-            Date end_time = date_format.parse(event_cols[4]);
             values.put(EventEntry.COLUMN_NAME_START_TIME, start_time.getTime());
-            values.put(EventEntry.COLUMN_NAME_END_TIME, end_time.getTime());
+            if(!(event_cols[4].equals("null"))) {
+                Date end_time = date_format.parse(event_cols[4]);
+                values.put(EventEntry.COLUMN_NAME_END_TIME, end_time.getTime());
+            }
 
         }
-        values.put(EventEntry.COLUMN_NAME_LAT, Double.parseDouble(event_cols[5]));
-        values.put(EventEntry.COLUMN_NAME_LON, Double.parseDouble(event_cols[6]));
+
+        if(!(event_cols[5].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_LAT, event_cols[5]);
+        }
+        if(!(event_cols[6].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_LON, event_cols[6]);
+        }
         values.put(EventEntry.COLUMN_NAME_LOCATION, event_cols[7]);
-        values.put(EventEntry.COLUMN_NAME_DESCRIPTION, event_cols[8]);
-        values.put(EventEntry.COLUMN_NAME_LINK, event_cols[9]);
-        values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event_cols[10]);
+        if(!(event_cols[8].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_DESCRIPTION, event_cols[8]);
+        }
+        if(!(event_cols[9].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_LINK, event_cols[9]);
+        }
+        if(!(event_cols[10].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event_cols[10]);
+        }
 
         try {
+            Log.d("MSG: ", "STRING START");
             // insert
             db.insert(EventEntry.TABLE_NAME, // table
                     null, //nullColumnHack
@@ -187,6 +204,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery(selectQuery, null);
         int num_rows = cursor.getCount();
         String[][] event_list = new String[num_rows][];
+        Log.d("MSG:", "getAllEventStringsSTART()");
         if (cursor.moveToFirst()) {
             int index = 0;
             do {
@@ -208,8 +226,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 //since start_time and end_time are still in integer format, need to convert to datetime
                 SimpleDateFormat ft = new SimpleDateFormat (EventEntry.DATE_FORMAT);
                 event_list[index][3] = ft.format(Long.parseLong(event_list[index][3]));
-                event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
-
+                if(event_list[index][4] != null) {
+                    event_list[index][4] = ft.format(Long.parseLong(event_list[index][4]));
+                }
                 index++;
             } while (cursor.moveToNext());
         }
@@ -262,7 +281,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         //add to WLtoDelete if entry synced in order to sync with database later
-        String selectQuery = "SELECT  * FROM " + WLEntry.TABLE_NAME + " WHERE " + WLEntry.COLUMN_NAME_USER_ID +
+        String selectQuery = "SELECT * FROM " + WLEntry.TABLE_NAME + " WHERE " + WLEntry.COLUMN_NAME_USER_ID +
                 " = '" + user_id +"' AND " + WLEntry.COLUMN_NAME_EVENT_ID + " = " + event_id;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -304,8 +323,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public String[][] getAllWatchLaterEvents(String user_id) {
         String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " INNER JOIN " + WLEntry.TABLE_NAME +
-                " ON " + WLEntry.TABLE_NAME + "." + WLEntry.COLUMN_NAME_USER_ID + " = " + user_id +
-                " AND " + EventEntry.TABLE_NAME + "." + EventEntry.COLUMN_NAME_EVENT_ID + " = " +
+                " ON " + WLEntry.TABLE_NAME + "." + WLEntry.COLUMN_NAME_USER_ID + " = '" + user_id +
+                "' AND " + EventEntry.TABLE_NAME + "." + EventEntry.COLUMN_NAME_EVENT_ID + " = " +
                 WLEntry.TABLE_NAME + "." + WLEntry.COLUMN_NAME_EVENT_ID;
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);

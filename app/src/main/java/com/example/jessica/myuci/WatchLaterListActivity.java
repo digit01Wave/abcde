@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.jessica.myuci.FeedReaderContract.WLEntry;
 import com.example.jessica.myuci.FeedReaderContract.ServerEntry;
+import com.example.jessica.myuci.FeedReaderContract.UserInfo;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -32,11 +33,12 @@ import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-public class WatchLaterListActivity extends AppCompatActivity {
+public class WatchLaterListActivity extends BaseActivity {
 
     RecyclerView mRecyclerView;
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
     ProgressDialog prgDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,19 @@ public class WatchLaterListActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        //Initialize Progress Dialog properties
+        prgDialog = new ProgressDialog(this);
+        prgDialog.setMessage("Synching your new data with remote database. Please wait...");
+        prgDialog.setCancelable(false);
+
+        syncWatchLaterSQLiteMySQLDB();
+
         mRecyclerView = (RecyclerView) findViewById(R.id.watch_later_recycler_view);
 
         // use this setting to improve performance if you know that changes
@@ -68,7 +83,7 @@ public class WatchLaterListActivity extends AppCompatActivity {
         MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
         //should find a way to get a proper user id
-        String[][] myDataset = controller.getAllWatchLaterEvents(WLEntry.GET_ID);
+        String[][] myDataset = controller.getAllWatchLaterEvents(UserInfo.USER_ID);
 
         MyAdapter mAdapter = new MyAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
@@ -88,33 +103,10 @@ public class WatchLaterListActivity extends AppCompatActivity {
             }
         });
 
-        //Initialize Progress Dialog properties
-        prgDialog = new ProgressDialog(this);
-        prgDialog.setMessage("Synching your new data with remote database. Please wait...");
-        prgDialog.setCancelable(false);
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_my, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //When Sync action button is clicked
-        if (id == R.id.refresh) {
-            //Sync SQLite DB data to remote MySQL DB
-            syncWatchLaterSQLiteMySQLDB();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     public void syncWatchLaterSQLiteMySQLDB(){
         //Create AsycHttpClient object

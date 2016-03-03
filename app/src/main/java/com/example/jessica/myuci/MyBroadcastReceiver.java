@@ -10,10 +10,11 @@ import org.json.JSONObject;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.jessica.myuci.FeedReaderContract.ServerEntry;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -21,7 +22,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
     static int noOfTimes = 0;
-    static final String URL_GET_SYNC = "http://10.0.2.2/mysqlsqlitesync/getdbrowcount.php";
+
 
     // Method gets called when Broad Case is issued from MainActivity for every 10 seconds
     @Override
@@ -32,10 +33,10 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         // Checks if new records are inserted in Remote MySQL DB to proceed with Sync operation
-        client.post(URL_GET_SYNC,params ,new TextHttpResponseHandler() {
+        client.post(ServerEntry.URL_GET_SYNC,params ,new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                System.out.println(response);
+                Log.d("PRINT: ", response);
                 try {
                     // Create JSON object out of the response sent by getdbrowcount.php
                     JSONObject obj = new JSONObject(response);

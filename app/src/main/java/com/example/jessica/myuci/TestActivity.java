@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -112,9 +111,9 @@ public class TestActivity extends BaseActivity {
 //        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 //        // Alarm Manager Object
 //        AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-//        // Alarm Manager calls BroadCast for every Ten seconds (10 * 1000), BroadCase further calls service to check if new records are inserted in
+//        // Alarm Manager calls BroadCast for every 20 seconds (10 * 1000), BroadCase further calls service to check if new records are inserted in
 //        // Remote MySQL DB
-//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 5000, 10 * 1000, pendingIntent);
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 5000, 20 * 1000, pendingIntent);
 
     }
 
@@ -191,7 +190,7 @@ public class TestActivity extends BaseActivity {
     }
 
     public void updateSQLite(String response){
-        Log.d("MSG: ", "starting update ");
+        Log.d("MSG: ", "starting sqlLite event update ");
         ArrayList<String[]> event_synclist = new ArrayList<String[]>();
 
         // Create GSON object
@@ -245,28 +244,6 @@ public class TestActivity extends BaseActivity {
         Intent objIntent = new Intent(getApplicationContext(), TestActivity.class);
         startActivity(objIntent);
     }
-
-//    // Method to inform remote MySQL DB about completion of Sync activity
-//    public void updateMySQLSyncSts(String json) {
-//        System.out.println(json);
-//        AsyncHttpClient client = new AsyncHttpClient();
-//        RequestParams params = new RequestParams();
-//        params.put("syncsts", json);
-//        // Make Http call to updatesyncsts.php with JSON parameter which has Sync statuses of Users
-//        client.post(URL_UPDATE_SYNCS, params, new TextHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String response) {
-//                Toast.makeText(getApplicationContext(), "MySQL DB has been informed about Sync activity", Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String response, Throwable e) {
-//                Toast.makeText(getApplicationContext(), "Error Occured", Toast.LENGTH_LONG).show();
-//            }
-//        });
-//    }
-
-
 
 
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 import io.krumbs.sdk.KrumbsSDK;
 import io.krumbs.sdk.krumbscapture.KCaptureCompleteListener;
 
-public class NavigatorActivity extends AppCompatActivity {
+public class NavigatorActivity extends BaseActivity {
     private View cameraView;
     private View startCaptureButton;
 

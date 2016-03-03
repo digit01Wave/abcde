@@ -34,7 +34,6 @@ public final class FeedReaderContract {
 
     /* Inner class that defines the watch later events table contents */
     public static abstract class WLEntry{
-        public static final String GET_ID = "2";
         public static final String TABLE_NAME = "watch_later_events";
         public static final int NUM_COLUMNS = 3;
         public static final String COLUMN_NAME_USER_ID = "user_id";
@@ -46,8 +45,9 @@ public final class FeedReaderContract {
 
     /* Inner class thad defines server related content*/
     public static abstract class ServerEntry{
-        public static final String URL_INSERT_WATCH_LATER = "http://10.0.2.2/myuci/updateWatchLater.php";
-        public final static String URL_GET_EVENT = "http://10.0.2.2/myuci/getevents.php";
+        public static final String URL_INSERT_WATCH_LATER = "http://54.215.240.25/myuci/updateWatchLater.php";
+        public static final String URL_GET_EVENT = "http://54.215.240.25/myuci/getevents.php";
+        public static final String URL_GET_SYNC = "http://54.215.240.25/myuci/getdbrowcount.php";
 
         public static final String JSON_UPDATE_TITLE = "watchLaterEventsJSON";
 
@@ -57,6 +57,11 @@ public final class FeedReaderContract {
         public static final String UPDATE_ACTION_TITLE = "update_action";
         public static final String UPDATE_ACTION_ADD = "add";
         public static final String UPDATE_ACTION_DELETE = "delete";
+    }
+
+    /*Current User Information*/
+    public static abstract class UserInfo{
+        public static String USER_ID;
     }
 
 

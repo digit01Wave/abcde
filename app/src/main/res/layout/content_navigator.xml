@@ -12,52 +12,24 @@
     tools:context="com.example.jessica.myuci.NavigatorActivity"
     tools:showIn="@layout/activity_navigator">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:id="@+id/button"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:onClick="goLoginActivity"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Populate Database"
-        android:id="@+id/button2"
-        android:layout_marginTop="30dp"
-        android:layout_below="@+id/button"
-        android:layout_centerHorizontal="true"
-        android:onClick="goPopulateDatabaseActivity"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="EventList"
         android:id="@+id/button3"
-        android:layout_below="@+id/button2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:onClick="goEventListActivity"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TEST PAGE"
-        android:id="@+id/button4"
-        android:layout_below="@+id/button3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:onClick="goTestActivity"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/krumbs_button_label"
         android:id="@+id/kcapturebutton"
-        android:layout_below="@+id/button4"
+        android:layout_below="@+id/button3"
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:onClick="goKrumbsActivity"/>

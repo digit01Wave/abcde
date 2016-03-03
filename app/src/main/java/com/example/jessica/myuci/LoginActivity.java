@@ -82,6 +82,9 @@ public class LoginActivity extends AppCompatActivity {
                                 "login success",
                                 Toast.LENGTH_LONG).show();
 
+                        //save user info in feedReader
+                        FeedReaderContract.UserInfo.USER_ID = emailStr;
+
                         if (saveLoginCheckBox.isChecked()) {
                             loginPrefsEditor.putBoolean("saveLogin", true);
                             loginPrefsEditor.putString("username", emailStr);
@@ -94,6 +97,10 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         loginPrefsEditor.putString("curUser", emailStr);
                         loginPrefsEditor.commit();
+
+                        //go to new activity
+                        Intent intent = new Intent(LoginActivity.this, NavigatorActivity.class);
+                        startActivity(intent);
                     }
 
                     @Override
@@ -130,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Map<String, Object> result) {
                             Toast.makeText(getApplicationContext(),
-                                    "Successfully created user acount, now log in",
+                                    "Successfully created user account, now log in",
                                     Toast.LENGTH_LONG).show();
 
                             Log.d("login", "Successfully created user account with uid: " + result.get("uid"));
