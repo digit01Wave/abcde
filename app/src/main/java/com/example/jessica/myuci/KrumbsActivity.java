@@ -27,7 +27,6 @@ public class KrumbsActivity extends AppCompatActivity {
 
     private void startCapture() {
         int containerId = R.id.camera_container;
-// SDK usage step 4 - Start the K-Capture component and add a listener to handle returned images and URLs
         KrumbsSDK.startCapture(containerId, this, new KCaptureCompleteListener() {
             @Override
             public void captureCompleted(CompletionState completionState, boolean audioCaptured, Map<String, Object> map) {
@@ -38,9 +37,11 @@ public class KrumbsActivity extends AppCompatActivity {
                 if (completionState == CompletionState.CAPTURE_SUCCESS) {
                     // The local image url for your capture
                     String imagePath = (String) map.get(KCaptureCompleteListener.CAPTURE_MEDIA_IMAGE_PATH);
+                    Log.d("Krumbs", "imagePath: " + imagePath);
                     if (audioCaptured) {
                         // The local audio url for your capture (if user decided to record audio)
                         String audioPath = (String) map.get(KCaptureCompleteListener.CAPTURE_MEDIA_AUDIO_PATH);
+                        Log.d("Krumbs", "imagePath: " + audioPath);
                     }
                     // The mediaJSON url for your capture
                     String mediaJSONUrl = (String) map.get(KCaptureCompleteListener.CAPTURE_MEDIA_JSON_URL);
