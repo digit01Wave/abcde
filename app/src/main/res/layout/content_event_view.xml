@@ -15,8 +15,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/event_watch_later_button"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/centerPoint"/>
+    <TextView
+        android:id="@+id/centerPoint"
+        android:text=""
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/event_calendar_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp" />
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/centerPoint"/>
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

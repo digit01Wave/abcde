@@ -3,6 +3,7 @@ package com.example.jessica.myuci;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -18,7 +19,7 @@ public class GetLatLng {
         List<Address> address;
         LatLng p1 = null;
         try {
-            address = coder.getFromLocationName(strAddress, 5);
+            address = coder.getFromLocationName("UCI " + strAddress, 5);
             if (address == null) {
                 return null;
             }
@@ -29,8 +30,9 @@ public class GetLatLng {
             p1 = new LatLng(location.getLatitude(), location.getLongitude() );
 
         } catch (Exception ex) {
-
+            Log.d("---: ", "LatLng Error. Could not generate appropriate latitude and longitude");
             ex.printStackTrace();
+            return null;
         }
         return p1;
     }

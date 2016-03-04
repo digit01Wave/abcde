@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
+
+import static com.example.jessica.myuci.GetLatLng.getlatlngFromAddress;
 
 
 public class EventListActivity extends BaseActivity {
@@ -60,44 +63,39 @@ public class EventListActivity extends BaseActivity {
             }
         });
 
-        //get access to writable database
-        SQLiteDatabase db = controller.getWritableDatabase();
-        //Query for items
-        Cursor event_cursor = db.rawQuery("SELECT  * FROM "+EventEntry.TABLE_NAME, null);
-
-        // If events exist in SQLite DB
-        if (event_cursor.getColumnCount() != 0) {
-            String[][] myDataset = controller.getAllEventStrings();
-            MyAdapter mAdapter = new MyAdapter(myDataset);
-            RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-
-            mRecyclerView.setHasFixedSize(true);
-
-            // use a linear layout manager
-            LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-            mRecyclerView.setAdapter(mAdapter);
-
-
-            //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
-            //to solve recycler view's onclick problem
-            ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                @Override
-                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                    Intent intent = new Intent(v.getContext(), EventViewActivity.class);
-                    Bundle bundle = new Bundle();
-                    MyAdapter a = (MyAdapter) recyclerView.getAdapter();
-                    bundle.putStringArray("event_info", a.getDatasetItem(position));
-                    bundle.putString("list_title", EventEntry.TABLE_NAME);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-        }
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(this);
         prgDialog.setMessage("Transferring Data from Remote MySQL DB and Syncing SQLite. Please wait...");
         prgDialog.setCancelable(false);
+
+        syncSQLiteMySQLDB();
+
+        String[][] myDataset = controller.getAllEventStrings();
+        MyAdapter mAdapter = new MyAdapter(myDataset);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+
+
+        //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
+        //to solve recycler view's onclick problem
+        ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Intent intent = new Intent(v.getContext(), EventViewActivity.class);
+                Bundle bundle = new Bundle();
+                MyAdapter a = (MyAdapter) recyclerView.getAdapter();
+                bundle.putStringArray("event_info", a.getDatasetItem(position));
+                bundle.putString("list_title", EventEntry.TABLE_NAME);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
 
 //        // BroadCase Receiver Intent Object
 //        Intent alarmIntent = new Intent(getApplicationContext(), MyBroadcastReceiver.class);
@@ -135,8 +133,15 @@ public class EventListActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        Log.d("MSG:", "Resuming Event List Activities");
+        super.onResume();
+    }
+
     // Method to Sync MySQL to SQLite DB
     public void syncSQLiteMySQLDB() {
+        Log.d("MSG: ", "Starting Event Sync");
         // Create AsycHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
         // Http Request Params Object
@@ -157,8 +162,7 @@ public class EventListActivity extends BaseActivity {
                 // Hide ProgressBar
                 prgDialog.hide();
                 // Update SQLite DB with response sent by getusers.php
-                Log.d("MSG: ", "In SUCCESS");
-                Log.d("MSG: ", response);
+                Log.d("MSG: ", "Grabbed Event Successfully = "+response);
                 updateSQLite(response);
 
             }
@@ -185,16 +189,14 @@ public class EventListActivity extends BaseActivity {
 
     public void updateSQLite(String response){
         Log.d("MSG: ", "starting sqlLite event update ");
-        ArrayList<String[]> event_synclist = new ArrayList<String[]>();
-
         // Create GSON object
         Gson gson = new GsonBuilder().create();
         try {
             // Extract JSON array from the response
             JSONArray arr = new JSONArray(response);
             Log.d("MSG: ", "JSON array length = " + Integer.toString(arr.length()));
-            // If no of array elements is not zero
-            if(arr.length() != 0){
+            // If array elements is not zero and is not equal to what we already have
+            if(arr.length() != 0 && arr.length() != controller.getTableLength(EventEntry.TABLE_NAME)){
                 // Loop through each array element, get JSON object which has userid and username
                 for (int i = 0; i < arr.length(); i++) {
                     // Get JSON object
@@ -213,6 +215,16 @@ public class EventListActivity extends BaseActivity {
                     queryValues[8] = obj.get(EventEntry.COLUMN_NAME_DESCRIPTION).toString();
                     queryValues[9] = obj.get(EventEntry.COLUMN_NAME_LINK).toString();
                     queryValues[10] = obj.get(EventEntry.COLUMN_NAME_IMAGE_LINK).toString();
+
+                    //if no lat or lon, then try and generate them from location
+                    if(queryValues[5].equals("null") || queryValues[6].equals("null")){
+                        LatLng loc = getlatlngFromAddress(EventListActivity.this, queryValues[7]);
+                        if(loc != null){
+                            queryValues[5] = Double.toString(loc.latitude);
+                            queryValues[6] = Double.toString(loc.longitude);
+                            Log.d("MSG: ", "YES. GOT THE LAT LONG TO BE (" + queryValues[5] + ", " + queryValues[6] + ")");
+                        }
+                    }
 
                     // Insert Event into SQLite DB
                     try {
@@ -237,6 +249,7 @@ public class EventListActivity extends BaseActivity {
     public void reloadActivity() {
         Intent objIntent = new Intent(getApplicationContext(), EventListActivity.class);
         startActivity(objIntent);
+        finish(); //so we don't have the old one on the activity stack
     }
 
 

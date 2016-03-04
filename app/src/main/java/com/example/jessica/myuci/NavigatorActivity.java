@@ -34,6 +34,7 @@ public class NavigatorActivity extends BaseActivity {
             }
         });
 
+
         //KrumbsSDK.initialize(getApplicationContext(), "zmmzAIzwM65XahnKb1lmD1ij7z4J2bToqRRIuGDH", "bJI7wx5HafWH9x6icjJ9RtMQEZf4XxpoOtX6TJwm");
 
     }
@@ -53,8 +54,11 @@ public class NavigatorActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public void goTestActivity(View view){
-        Intent intent = new Intent(this, TestActivity.class);
+    public void goCalendarActivity(View view){
+        Intent intent = new Intent(this, PersonalListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("table_name", FeedReaderContract.CalendarEntry.TABLE_NAME);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 
@@ -64,9 +68,13 @@ public class NavigatorActivity extends BaseActivity {
     }
 
     public void goWatchLaterListActivity(View view){
-        Intent intent = new Intent(this, WatchLaterListActivity.class);
+        Intent intent = new Intent(this, PersonalListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("table_name", FeedReaderContract.WLEntry.TABLE_NAME);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
+
 
 
 

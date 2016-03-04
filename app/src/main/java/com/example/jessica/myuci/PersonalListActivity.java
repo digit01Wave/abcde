@@ -1,6 +1,3 @@
-/*
-* most code from site http://programmerguru.com/android-tutorial/how-to-sync-sqlite-on-android-to-mysql-db/
-* */
 package com.example.jessica.myuci;
 
 import android.app.ProgressDialog;
@@ -15,10 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.jessica.myuci.FeedReaderContract.WLEntry;
-import com.example.jessica.myuci.FeedReaderContract.PersonalEntry;
-import com.example.jessica.myuci.FeedReaderContract.ServerEntry;
-import com.example.jessica.myuci.FeedReaderContract.UserInfo;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -27,20 +20,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import cz.msebera.android.httpclient.Header;
 
-public class WatchLaterListActivity extends BaseActivity {
+public class PersonalListActivity extends BaseActivity {
 
     RecyclerView mRecyclerView;
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
     ProgressDialog prgDialog;
-
+    String table_name;
+    String get_url;
+    String insert_url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_watch_later_list);
+        setContentView(R.layout.activity_personal_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -53,20 +47,37 @@ public class WatchLaterListActivity extends BaseActivity {
             }
         });
 
+
+        //Initialize Progress Dialog properties
+        prgDialog = new ProgressDialog(this);
+        prgDialog.setMessage("Syncing your new data with remote database. Please wait...");
+        prgDialog.setCancelable(false);
+
+        //find which personalized list we are viewing
+        Bundle extras = getIntent().getExtras();
+        table_name = extras.getString("table_name");
+
+        //get the appropriate urls
+        if(table_name.equals(FeedReaderContract.WLEntry.TABLE_NAME)){
+            insert_url = FeedReaderContract.ServerEntry.URL_INSERT_WATCH_LATER;
+            get_url = FeedReaderContract.ServerEntry.URL_GET_WL;
+            setTitle(getString(R.string.watch_later_list_title));
+        } else { //is calendar item
+            insert_url = FeedReaderContract.ServerEntry.URL_INSERT_CALENDAR;
+            get_url = FeedReaderContract.ServerEntry.URL_GET_CALENDAR;
+            setTitle(getString(R.string.calendar_list_title));
+        }
+        Log.d("MSG:", "Created Personal List " + table_name);
     }
 
     @Override
     protected void onResume(){
         super.onResume();
 
-        //Initialize Progress Dialog properties
-        prgDialog = new ProgressDialog(this);
-        prgDialog.setMessage("Synching your new data with remote database. Please wait...");
-        prgDialog.setCancelable(false);
 
-        syncWatchLaterSQLiteMySQLDB();
+        syncSQLiteMySQLDB();
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.watch_later_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.personal_list_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -76,11 +87,8 @@ public class WatchLaterListActivity extends BaseActivity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //get database
-        MySQLiteHelper controller = new MySQLiteHelper(this, null);
-
         //should find a way to get a proper user id
-        String[][] myDataset = controller.getAllPersonalListEvents(WLEntry.TABLE_NAME, UserInfo.USER_ID);
+        String[][] myDataset = controller.getAllPersonalListEvents(table_name, FeedReaderContract.UserInfo.USER_ID);
 
         MyAdapter mAdapter = new MyAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
@@ -94,25 +102,26 @@ public class WatchLaterListActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
                 MyAdapter a = (MyAdapter) recyclerView.getAdapter();
                 bundle.putStringArray("event_info", a.getDatasetItem(position));
-                bundle.putString("list_title", WLEntry.TABLE_NAME);
+                bundle.putString("table_name", table_name);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
+        Log.d("MSG: ", "Resumed " + table_name);
 
 
     }
 
 
 
-    public void syncWatchLaterSQLiteMySQLDB(){
+    public void syncSQLiteMySQLDB(){
         //Create AsycHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        if(controller.dbPersonalListSyncCount(WLEntry.TABLE_NAME) != 0){
+        if(controller.dbPersonalListSyncCount(table_name) != 0){
             prgDialog.show();
-            params.put(ServerEntry.JSON_UPDATE_TITLE, controller.composeJSONfromPersonalSQLite(WLEntry.TABLE_NAME));
-            client.post(ServerEntry.URL_INSERT_WATCH_LATER, params, new TextHttpResponseHandler() {
+            params.put(FeedReaderContract.ServerEntry.JSON_UPDATE_TITLE, controller.composeJSONfromPersonalSQLite(table_name));
+            client.post(insert_url, params, new TextHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String response) {
                     System.out.println(response);
@@ -122,14 +131,14 @@ public class WatchLaterListActivity extends BaseActivity {
                         System.out.println(arr.length());
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject obj = (JSONObject) arr.get(i);
-                            Log.d("Print: ", obj.getString(PersonalEntry.COLUMN_NAME_USER_ID));
-                            Log.d("Print: ", obj.getString(PersonalEntry.COLUMN_NAME_EVENT_ID));
-                            Log.d("Print: ", obj.getString(ServerEntry.UPDATE_ACTION_TITLE));
-                            Log.d("Print: ", obj.getString(PersonalEntry.COLUMN_NAME_UPDATE_STATUS));
-                            controller.updatePersonalListSyncStatus(WLEntry.TABLE_NAME, obj.getString(PersonalEntry.COLUMN_NAME_USER_ID),
-                                    obj.getString(PersonalEntry.COLUMN_NAME_EVENT_ID),
-                                    obj.getString(ServerEntry.UPDATE_ACTION_TITLE),
-                                    obj.getString(PersonalEntry.COLUMN_NAME_UPDATE_STATUS));
+                            Log.d("Print: ", obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_USER_ID));
+                            Log.d("Print: ", obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_EVENT_ID));
+                            Log.d("Print: ", obj.getString(FeedReaderContract.ServerEntry.UPDATE_ACTION_TITLE));
+                            Log.d("Print: ", obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_UPDATE_STATUS));
+                            controller.updatePersonalListSyncStatus(table_name, obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_USER_ID),
+                                    obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_EVENT_ID),
+                                    obj.getString(FeedReaderContract.ServerEntry.UPDATE_ACTION_TITLE),
+                                    obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_UPDATE_STATUS));
                         }
                         Toast.makeText(getApplicationContext(), "DB Sync completed!", Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
@@ -153,7 +162,7 @@ public class WatchLaterListActivity extends BaseActivity {
                 }
             });
         }else{ //check if changes had been made on another machine
-            client.post(ServerEntry.URL_GET_WL, params, new TextHttpResponseHandler() {
+            client.post(get_url, params, new TextHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String response) {
 
@@ -161,14 +170,14 @@ public class WatchLaterListActivity extends BaseActivity {
                         JSONArray arr = new JSONArray(response);
 
                         //if have unsynced changes
-                        if(arr.length() != controller.getTableLength(WLEntry.TABLE_NAME)) {
+                        if(arr.length() != controller.getTableLength(table_name)) {
                             for (int i = 0; i < arr.length(); i++) {
                                 JSONObject obj = (JSONObject) arr.get(i);
-                                Log.d("Print: ", obj.getString(PersonalEntry.COLUMN_NAME_USER_ID));
-                                Log.d("Print: ", obj.getString(PersonalEntry.COLUMN_NAME_EVENT_ID));
-                                controller.addPersonalListItem(WLEntry.TABLE_NAME, obj.getString(PersonalEntry.COLUMN_NAME_USER_ID),
-                                        obj.getString(PersonalEntry.COLUMN_NAME_EVENT_ID),
-                                        ServerEntry.UPDATE_STATUS_SYNCED);
+                                Log.d("Print: ", obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_USER_ID));
+                                Log.d("Print: ", obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_EVENT_ID));
+                                controller.addPersonalListItem(table_name, obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_USER_ID),
+                                        obj.getString(FeedReaderContract.PersonalEntry.COLUMN_NAME_EVENT_ID),
+                                        FeedReaderContract.ServerEntry.UPDATE_STATUS_SYNCED);
                                 reloadActivity();
                             }
                         }
@@ -199,11 +208,14 @@ public class WatchLaterListActivity extends BaseActivity {
 
     // Reload MainActivity
     public void reloadActivity() {
-        Intent objIntent = new Intent(getApplicationContext(), WatchLaterListActivity.class);
+        Intent objIntent = new Intent(getApplicationContext(), PersonalListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("table_name", table_name);
+        objIntent.putExtras(bundle);
         startActivity(objIntent);
         finish(); //so we don't have the old one on the activity stack
     }
 
 
-}
 
+}
