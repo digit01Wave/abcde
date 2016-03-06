@@ -53,10 +53,10 @@
     <string name="delete_from_calendar">Remove from Calendar</string>
 
 
-
     <!--ACTION BAR TITLES-->
     <string name="watch_later_list_title">Watch Later List</string>
     <string name="calendar_list_title">Calendar List</string>
+    <string name="title_activity_map_view">Map</string>
 
 
 </resources>

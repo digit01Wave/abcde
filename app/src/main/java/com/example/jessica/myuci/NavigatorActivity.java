@@ -74,9 +74,10 @@ public class NavigatorActivity extends BaseActivity {
         intent.putExtras(bundle);
         startActivity(intent);
     }
-
-
-
+    public void goMapViewActivity(View view){
+        Intent intent = new Intent(this, MapViewActivity.class);
+        startActivity(intent);
+    }
 
 
 }
