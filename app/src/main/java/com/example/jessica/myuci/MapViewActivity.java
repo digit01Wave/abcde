@@ -34,6 +34,10 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private GoogleMap mMap;
     private Marker[] markers;
     private Integer clickedMarkerId;
+    String[][] allEvents;
+
+    MySQLiteHelper controller = new MySQLiteHelper(this, null);
+
     public static final CameraPosition uci =
             new CameraPosition.Builder().target(new LatLng(33.645898, -117.842703))
                     .zoom(16.0f)
@@ -76,13 +80,19 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         Log.d("map", "onMapReady");
         mMap = googleMap;
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(uci));
-        CurEvent.loadEvents();
-        Log.d("map", "loadEvents");
-        markers = new Marker[CurEvent.events.length];
-        for(int i = 0; i < CurEvent.events.length; i ++) {
-            markers[i] = mMap.addMarker(new MarkerOptions().position(new LatLng(CurEvent.events[i].getLat(), CurEvent.events[i].getLon())).
-                    title(CurEvent.events[i].getTitle()));
+
+        allEvents = controller.getAllEventStrings();
+        Log.d("map", "loadedEvents");
+        markers = new Marker[allEvents.length];
+        for(int i = 0; i < allEvents.length; i ++) {
+            //make sure there is a lat long to see
+            if(!(allEvents[i][5] == null)){
+                markers[i] = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(allEvents[i][5]), Double.parseDouble(allEvents[i][6]))).
+                        title(allEvents[i][1]));
+
+            }
         }
+
         Log.d("map", "add markers");
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater()));
         mMap.setOnMarkerClickListener(this);
@@ -112,37 +122,28 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             location = (TextView) v.findViewById(R.id.event_location);
             description = (TextView) v.findViewById(R.id.event_description);
             link = (TextView) v.findViewById(R.id.event_link);
-            EventItem eventItem = CurEvent.events[clickedMarkerId];
 
-            String tmp = eventItem.getTitle();
-            if(tmp != null){
-                title.setText(new SpannableString(tmp));
+            if(allEvents[clickedMarkerId][1] != null) {
+                title.setText(new SpannableString(allEvents[clickedMarkerId][1]));
             }
-            tmp = eventItem.getHoster();
-            if(tmp != null){
-                hoster.setText(new SpannableString(tmp));
+            if(allEvents[clickedMarkerId][2] != null) {
+                hoster.setText(new SpannableString(allEvents[clickedMarkerId][2]));
             }
-            tmp = eventItem.getLocation();
-            if(tmp != null) {
-                location.setText(new SpannableString(tmp));
+            if(allEvents[clickedMarkerId][7] != null) {
+                location.setText(new SpannableString(allEvents[clickedMarkerId][7]));
             }
-            tmp = eventItem.getDescription();
-            if(tmp != null) {
-                link.setText(new SpannableString(tmp));
+            if(allEvents[clickedMarkerId][9] != null) {
+                link.setText(new SpannableString(allEvents[clickedMarkerId][9]));
             }
-            tmp = eventItem.getDescription();
-            if(tmp != null) {
-                description.setText(new SpannableString(tmp));
+            if(allEvents[clickedMarkerId][8] != null) {
+                description.setText(new SpannableString(allEvents[clickedMarkerId][8]));
             }
-            Date time = eventItem.getStartTime();
-            if(time != null) {
-                start_time.setText(new SpannableString(time.toString()));
+            if(allEvents[clickedMarkerId][3] != null) {
+                start_time.setText(new SpannableString(allEvents[clickedMarkerId][3]));
             }
-            time = eventItem.getEndTime();
-            if(time != null) {
-                end_time.setText(new SpannableString(time.toString()));
+            if(allEvents[clickedMarkerId][4] != null) {
+                end_time.setText(new SpannableString(allEvents[clickedMarkerId][4]));
             }
-
             Log.d("map", "render marker info window ");
             return v;
         }
