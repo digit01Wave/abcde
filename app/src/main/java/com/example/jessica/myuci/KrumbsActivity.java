@@ -51,7 +51,7 @@ public class KrumbsActivity extends BaseActivity {
                     finish();
                 } else if (completionState == CompletionState.CAPTURE_CANCELLED ||
                         completionState == CompletionState.SDK_NOT_INITIALIZED) {
-                    Log.d("Krumbs", "capture_cancelled");
+                    Log.d("Krumbs", "capture_cancelled. CompetionState = " + completionState);
                     finish();
                 }
             }

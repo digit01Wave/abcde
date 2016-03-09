@@ -16,7 +16,7 @@ public final class FeedReaderContract {
     /* Inner class that defines the event table contents */
     public static abstract class EventEntry{
         public static final String TABLE_NAME = "uci_events";
-        public static final int NUM_COLUMNS = 11;
+        public static final int NUM_COLUMNS = 13;
         public static final String COLUMN_NAME_EVENT_ID = "event_id";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_HOSTER = "hoster";
@@ -28,6 +28,8 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_LINK = "link";
         public static final String COLUMN_NAME_IMAGE_LINK = "image_link";
+        public static final String COLUMN_NAME_SOURCE_TYPE = "source_type";
+        public static final String COLUMN_NAME_SOURCE_SUBTYPE = "source_subtype";
 
         public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     }

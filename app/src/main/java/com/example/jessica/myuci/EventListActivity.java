@@ -160,7 +160,7 @@ public class EventListActivity extends BaseActivity {
             public void onSuccess(int statusCode, Header[] headers, String response) { //byte [] response
                 // called when response HTTP status is "200 OK"
                 // Hide ProgressBar
-                prgDialog.hide();
+                prgDialog.dismiss();
                 // Update SQLite DB with response sent by getusers.php
                 Log.d("MSG: ", "Grabbed Event Successfully = "+response);
                 updateSQLite(response);
@@ -171,7 +171,7 @@ public class EventListActivity extends BaseActivity {
             public void onFailure(int statusCode, Header[] headers, String response, Throwable e) { //byte[] response
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 // Hide ProgressBar
-                prgDialog.hide();
+                prgDialog.dismiss();
                 if (statusCode == 404) {
                     Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
                 } else if (statusCode == 500) {
@@ -215,14 +215,15 @@ public class EventListActivity extends BaseActivity {
                     queryValues[8] = obj.get(EventEntry.COLUMN_NAME_DESCRIPTION).toString();
                     queryValues[9] = obj.get(EventEntry.COLUMN_NAME_LINK).toString();
                     queryValues[10] = obj.get(EventEntry.COLUMN_NAME_IMAGE_LINK).toString();
-
+                    queryValues[11] = obj.get(EventEntry.COLUMN_NAME_SOURCE_TYPE).toString();
+                    queryValues[12] = obj.get(EventEntry.COLUMN_NAME_SOURCE_SUBTYPE).toString();
                     //if no lat or lon, then try and generate them from location
                     if(queryValues[5].equals("null") || queryValues[6].equals("null")){
-                        LatLng loc = getlatlngFromAddress(EventListActivity.this, queryValues[7]);
+                        LatLng loc = getlatlngFromAddress(EventListActivity.this, queryValues[7] + " Irvine, CA");
                         if(loc != null){
                             queryValues[5] = Double.toString(loc.latitude);
                             queryValues[6] = Double.toString(loc.longitude);
-                            Log.d("MSG: ", "YES. GOT THE LAT LONG TO BE (" + queryValues[5] + ", " + queryValues[6] + ")");
+                            Log.d("MSG: ", "Retrieved Lat Long for event_id {" + queryValues[0]+ "} is (" + queryValues[5] + ", " + queryValues[6] + ")");
                         }
                     }
 

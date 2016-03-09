@@ -30,7 +30,7 @@ public class StarterApplication extends Application {
 
     @Override
     public void onCreate() {
-        Log.d("MSG: ", "Initializing Starter Application");
+        Log.d("Krumbs: ", "Initializing Starter Application");
         super.onCreate();
         Log.d("login: ", "set firebase context");
         Firebase.setAndroidContext(this);
@@ -38,15 +38,14 @@ public class StarterApplication extends Application {
         //String clientKey = getMetadata(getApplicationContext(), KRUMBS_SDK_CLIENT_KEY);
         String appID = KRUMBS_SDK_APPLICATION_ID;
         String clientKey = KRUMBS_SDK_CLIENT_KEY;
-        Log.d("MSG: ", "About to check strings");
         if (appID != null && clientKey != null) {
-            Log.d("MSG: ", "YES!!");
 // SDK usage step 1 - initialize the SDK with your application id and client key
             KrumbsSDK.initialize(getApplicationContext(), appID, clientKey);
 
 // Implement the interface KMediaUploadListener.
 // After a Capture completes, the media (photo and audio) is uploaded to the cloud
 // KMediaUploadListener will be used to listen for various state of media upload from the SDK.
+            Log.d("Krumbs: ", "Finished initialize and about to configure upload listener");
             KMediaUploadListener kMediaUploadListener = new KMediaUploadListener() {
                 // onMediaUpload listens to various status of media upload to the cloud.
                 @Override
@@ -57,6 +56,7 @@ public class StarterApplication extends Application {
                         if (mediaUploadStatus == KMediaUploadListener.MediaUploadStatus.UPLOAD_SUCCESS) {
                             if (mediaType != null && mediaUrl != null) {
                                 Log.i("KRUMBS-BROADCAST-RECV", mediaType + ": " + id + ", " + mediaUrl);
+                                Log.d("Krumbs", "KRUMBS-BROADCAST-RECV" + mediaType + ": " + id + ", " + mediaUrl);
                             }
                         }
                     }
@@ -73,8 +73,11 @@ public class StarterApplication extends Application {
                 // the emoji image assets will be looked up by name when the KCapture camera is started
                 // Make sure to include the images in your resource directory before starting the KCapture
                 // Use the 'asset-generator' tool to build your image resources from intent-categories.json
+                Log.d("Krumbs", "About to register intent categories");
                 String assetPath = "IntentResourcesExample";
                 KrumbsSDK.registerIntentCategories(assetPath);
+
+                Log.d("Krumbs", "Registered intent categories and now gotta configure stuff");
 
 
 // SDK usage step 3 (optional) - add your Intent Panel view customizations
@@ -87,9 +90,8 @@ public class StarterApplication extends Application {
                         .intentPanelBarColor("#029EE1")
                         .intentPanelTextStyle(ts)
                         .build();
-
                 KrumbsSDK.setIntentPanelViewConfigurationDefaults(newDefaults);
-
+                Log.d("Krumbs", "BAAM configured panel");
 // SDK usage step 3 (optional) - register users so you can associate their ID (email) with created content with Cloud API
                 // Register user information (if your app requires login)
                 // to improve security on the mediaJSON created.
@@ -99,7 +101,7 @@ public class StarterApplication extends Application {
                         .firstName(SDK_STARTER_PROJECT_USER_FN)
                         .lastName(SDK_STARTER_PROJECT_USER_SN).build());
 
-
+                Log.d("Krumbs", "got to end of create for starter application");
             } catch (Exception e) {
                 e.printStackTrace();
             }

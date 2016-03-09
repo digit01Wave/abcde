@@ -47,7 +47,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     EventEntry.COLUMN_NAME_LOCATION + TEXT_TYPE + COMMA_SEP +
                     EventEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     EventEntry.COLUMN_NAME_LINK + TEXT_TYPE + COMMA_SEP +
-                    EventEntry.COLUMN_NAME_IMAGE_LINK + TEXT_TYPE +
+                    EventEntry.COLUMN_NAME_IMAGE_LINK + TEXT_TYPE + COMMA_SEP +
+                    EventEntry.COLUMN_NAME_SOURCE_TYPE + TEXT_TYPE + COMMA_SEP +
+                    EventEntry.COLUMN_NAME_SOURCE_SUBTYPE + TEXT_TYPE +
             " )";
     private static final String SQL_CREATE_WATCH_LATER_TABLE =
             "CREATE TABLE " + WLEntry.TABLE_NAME + " (" +
@@ -139,7 +141,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         * 8 => description
         * 9 => link
         * 10 => image_link
-        *
+        * 11 => source_type
+        * 12 => source_subtype
         * milesecond_format means that the start and end_time is in miliseconds (can be converted to
         * int. If set to false instead, then it means it is in the sql format 'YYYY-MM-DD HH:MM:SS'
         * */
@@ -149,11 +152,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         //create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
-        values.put(EventEntry.COLUMN_NAME_EVENT_ID, event_cols[0]);
-        values.put(EventEntry.COLUMN_NAME_TITLE, event_cols[1]);
-        if(!(event_cols[2].equals("null"))) {
+        values.put(EventEntry.COLUMN_NAME_EVENT_ID, event_cols[0]); //event_id
+        values.put(EventEntry.COLUMN_NAME_TITLE, event_cols[1]); //evnet_title
+        if(!(event_cols[2].equals("null"))) { //hoster (can be null)
             values.put(EventEntry.COLUMN_NAME_HOSTER, event_cols[2]);
         }
+
+        //start_time and end_time converted to proper format (millisecond)
         if(milisecond_format){ //is in milisecond format
             values.put(EventEntry.COLUMN_NAME_START_TIME, Integer.parseInt(event_cols[3]));
             if(!(event_cols[4].equals("null"))) {
@@ -178,13 +183,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
         values.put(EventEntry.COLUMN_NAME_LOCATION, event_cols[7]); //add location
         if(!(event_cols[8].equals("null"))) {
-            values.put(EventEntry.COLUMN_NAME_DESCRIPTION, event_cols[8]); //add description if there
+            values.put(EventEntry.COLUMN_NAME_DESCRIPTION, event_cols[8]); //add description (can be null)
         }
         if(!(event_cols[9].equals("null"))) {
-            values.put(EventEntry.COLUMN_NAME_LINK, event_cols[9]); //add link if there
+            values.put(EventEntry.COLUMN_NAME_LINK, event_cols[9]); //add link (can be null)
         }
         if(!(event_cols[10].equals("null"))) {
             values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event_cols[10]); //add image_link if there
+        }
+        if(!(event_cols[11].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_SOURCE_TYPE, event_cols[11]); //add source_type if there
+        }
+        if(!(event_cols[12].equals("null"))) {
+            values.put(EventEntry.COLUMN_NAME_SOURCE_SUBTYPE, event_cols[12]); //add image_link if there
         }
 
         try {
@@ -207,6 +218,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.d("MSG:", "getAllEventStrings()" + selectQuery);
         return getEventStringsHelper(selectQuery);
     }
+
+    /*Returns all events in SQLite Db - same format as in addEventItem ordered by some column*/
+    public String[][] getAllEventStrings(String col_order) {
+        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " ORDER BY "+ col_order;
+        Log.d("MSG:", "getAllEventStrings()" + selectQuery);
+        return getEventStringsHelper(selectQuery);
+    }
+
 
     /*Deletes all the Events - For Debugging Purposes*/
     public void deleteAllEvents(SQLiteDatabase db){
@@ -446,7 +465,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         cursor.getString(7), //location
                         cursor.getString(8), //description
                         cursor.getString(9), //link
-                        cursor.getString(10) //image_link
+                        cursor.getString(10), //image_link
+                        cursor.getString(11), //source_type
+                        cursor.getString(12) //source_subtype
                 };
                 event_list[index] = event;
 
@@ -493,7 +514,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(EventEntry.COLUMN_NAME_DESCRIPTION, event.getDescription());
         values.put(EventEntry.COLUMN_NAME_LINK, event.getLink());
         values.put(EventEntry.COLUMN_NAME_IMAGE_LINK, event.getImageLink());
-
         try {
             // insert
             db.insert(EventEntry.TABLE_NAME, // table

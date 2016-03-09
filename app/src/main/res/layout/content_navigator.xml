@@ -59,10 +59,9 @@
         android:layout_height="wrap_content"
         android:text="MapView"
         android:id="@+id/button"
-        android:layout_marginTop="71dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@+id/calendar_button"
-        android:layout_alignRight="@+id/calendar_button"
-        android:layout_alignEnd="@+id/calendar_button"
+        android:layout_centerHorizontal="true"
         android:onClick="goMapViewActivity"/>
 
 

@@ -25,6 +25,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     * 8: description
     * 9: link
     * 10: image_link
+    * 11: source_type
+    * 12: source_subtype
     * */
 
     // Provide a reference to the views for each data item
