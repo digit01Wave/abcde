@@ -23,8 +23,8 @@ import io.krumbs.sdk.data.model.Media;
 import io.krumbs.sdk.krumbscapture.KMediaUploadListener;
 
 public class StarterApplication extends Application {
-    public static final String KRUMBS_SDK_APPLICATION_ID = "zmmzAIzwM65XahnKb1lmD1ij7z4J2bToqRRIuGDH";
-    public static final String KRUMBS_SDK_CLIENT_KEY = "bJI7wx5HafWH9x6icjJ9RtMQEZf4XxpoOtX6TJwm";
+    public static final String KRUMBS_SDK_APPLICATION_ID = "io.krumbs.sdk.APPLICATION_ID";
+    public static final String KRUMBS_SDK_CLIENT_KEY = "io.krumbs.sdk.CLIENT_KEY";
     public static final String SDK_STARTER_PROJECT_USER_FN = "Jessica";
     public static final String SDK_STARTER_PROJECT_USER_SN = "Public";
 
@@ -34,10 +34,10 @@ public class StarterApplication extends Application {
         super.onCreate();
         Log.d("login: ", "set firebase context");
         Firebase.setAndroidContext(this);
-        //String appID = getMetadata(getApplicationContext(), KRUMBS_SDK_APPLICATION_ID);
-        //String clientKey = getMetadata(getApplicationContext(), KRUMBS_SDK_CLIENT_KEY);
-        String appID = KRUMBS_SDK_APPLICATION_ID;
-        String clientKey = KRUMBS_SDK_CLIENT_KEY;
+        String appID = getMetadata(getApplicationContext(), KRUMBS_SDK_APPLICATION_ID);
+        String clientKey = getMetadata(getApplicationContext(), KRUMBS_SDK_CLIENT_KEY);
+        Log.d("Krumbs: ", "retrieving appID = " + appID);
+        Log.d("Krumbs: ", "retrieving clientID = " + clientKey);
         if (appID != null && clientKey != null) {
 // SDK usage step 1 - initialize the SDK with your application id and client key
             KrumbsSDK.initialize(getApplicationContext(), appID, clientKey);
@@ -54,6 +54,7 @@ public class StarterApplication extends Application {
                     if (mediaUploadStatus != null) {
                         Log.i("KRUMBS-BROADCAST-RECV", mediaUploadStatus.toString());
                         if (mediaUploadStatus == KMediaUploadListener.MediaUploadStatus.UPLOAD_SUCCESS) {
+                            Log.d("Krumbs:", "Krumbs media Upload Status is a success");
                             if (mediaType != null && mediaUrl != null) {
                                 Log.i("KRUMBS-BROADCAST-RECV", mediaType + ": " + id + ", " + mediaUrl);
                                 Log.d("Krumbs", "KRUMBS-BROADCAST-RECV" + mediaType + ": " + id + ", " + mediaUrl);

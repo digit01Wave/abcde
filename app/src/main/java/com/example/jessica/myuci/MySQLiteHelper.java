@@ -74,6 +74,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     "PRIMARY KEY (" + PersonalEntry.COLUMN_NAME_USER_ID + ", " + PersonalEntry.COLUMN_NAME_EVENT_ID + ")" +
                     ")";
 
+
+
     private static final String SQL_CREATE_CALENDAR_DELETE_TABLE =
             "CREATE TABLE " + CalendarEntry.TO_DELETE_TABLE_NAME + " (" +
                     PersonalEntry.COLUMN_NAME_USER_ID + TEXT_TYPE + COMMA_SEP +
@@ -223,6 +225,29 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public String[][] getAllEventStrings(String col_order) {
         String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " ORDER BY "+ col_order;
         Log.d("MSG:", "getAllEventStrings()" + selectQuery);
+        return getEventStringsHelper(selectQuery);
+    }
+
+    /*Returns all events in SQLite Db with specific contraints (WHERE)*/
+    public String[][] getAllEventStringsWhere(String where_clause) {
+        if(where_clause.equals("null")){
+            return getAllEventStrings();
+        }
+
+        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE " + where_clause;
+        Log.d("MSG:", "getAllEventStringsWhere()" + selectQuery);
+        return getEventStringsHelper(selectQuery);
+    }
+
+    /*Returns all events in SQLite Db with specific contraints (WHERE) and roder (order*/
+    public String[][] getAllEventStringsWhereOrder(String where_clause, String ordered_by) {
+        if(where_clause.equals("null") && ordered_by.equals("null")){
+                return getAllEventStrings();
+        }else if (where_clause.equals("null")){
+            return getAllEventStrings(ordered_by);
+        }
+        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE " + where_clause + " ORDER BY " + ordered_by;
+        Log.d("MSG:", "getAllEventStringsWhereOrder()" + selectQuery);
         return getEventStringsHelper(selectQuery);
     }
 

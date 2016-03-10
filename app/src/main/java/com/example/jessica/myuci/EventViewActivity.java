@@ -167,7 +167,7 @@ public class EventViewActivity extends BaseActivity {
                 });
                 Log.d("MSG: ", "EventViewActivity Completed");
                 try{
-                    prgDialog.hide();
+                    prgDialog.dismiss();
                 }catch(Exception ex){
                     Log.i("---", "Exception in thread");
                 }

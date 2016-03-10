@@ -53,6 +53,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView location;
     private TextView description;
     private TextView link;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +62,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-
+        Bundle b = this.getIntent().getExtras();
+        allEvents = controller.getAllEventStringsWhere(b.getString("where_clause"));
         mapFragment.getMapAsync(this);
     }
 
@@ -81,7 +83,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         mMap = googleMap;
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(uci));
 
-        allEvents = controller.getAllEventStrings();
         Log.d("map", "loadedEvents");
         markers = new Marker[allEvents.length];
         for(int i = 0; i < allEvents.length; i ++) {

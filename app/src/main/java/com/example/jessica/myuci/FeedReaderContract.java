@@ -52,10 +52,11 @@ public final class FeedReaderContract {
         public static final String TO_DELETE_TABLE_NAME = "calendar_to_delete";
     }
 
+
+
     /* Inner class thad defines server related content*/
     public static abstract class ServerEntry{
         public static final String URL_GET_EVENT = "http://54.215.240.25/myuci/getevents.php";
-        public static final String URL_GET_EVENT_COUNT = "http://54.215.240.25/myuci/getdbrowcount.php";
         public static final String URL_GET_SYNC = "http://54.215.240.25/myuci/getdbrowcount.php";
 
         public static final String URL_INSERT_WATCH_LATER = "http://54.215.240.25/myuci/updateWatchLater.php";
@@ -64,10 +65,10 @@ public final class FeedReaderContract {
         public static final String URL_INSERT_CALENDAR = "http://54.215.240.25/myuci/updateCalendar.php";
         public static final String URL_GET_CALENDAR = "http://54.215.240.25/myuci/getCalendar.php";
 
-
-//        public static final String URL_INSERT_WATCH_LATER = "http://10.0.2.2/myuci/updateWatchLater.php";
 //        public static final String URL_GET_EVENT = "http://10.0.2.2/myuci/getevents.php";
 //        public static final String URL_GET_SYNC = "http://10.0.2.2/myuci/getdbrowcount.php";
+//
+//        public static final String URL_INSERT_WATCH_LATER = "http://10.0.2.2/myuci/updateWatchLater.php";
 //        public static final String URL_GET_WL = "http://10.0.2.2/myuci/getWatchLater.php";
 //
 //        public static final String URL_INSERT_CALENDAR = "http://10.0.2.2/myuci/updateCalendar.php";

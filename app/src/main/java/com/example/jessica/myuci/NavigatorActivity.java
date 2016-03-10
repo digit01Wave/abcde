@@ -39,15 +39,6 @@ public class NavigatorActivity extends BaseActivity {
 
     }
 
-    public void goLoginActivity(View view){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void goPopulateDatabaseActivity(View view){
-        Intent intent = new Intent(this, PopulateDatabaseActivity.class);
-        startActivity(intent);
-    }
 
     public void goEventListActivity(View view){
         Intent intent = new Intent(this, EventListActivity.class);
@@ -74,10 +65,11 @@ public class NavigatorActivity extends BaseActivity {
         intent.putExtras(bundle);
         startActivity(intent);
     }
-    public void goMapViewActivity(View view){
-        Intent intent = new Intent(this, MapViewActivity.class);
-        startActivity(intent);
+
+    public void goToCurrentListActivit(View view){
+
     }
+
 
 
 }

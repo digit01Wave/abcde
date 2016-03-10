@@ -45,6 +45,7 @@ public class EventListActivity extends BaseActivity {
     //Progress Dialog Object
     ProgressDialog prgDialog;
     String[] queryValues;
+    String[][] myDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class EventListActivity extends BaseActivity {
 
         syncSQLiteMySQLDB();
 
-        String[][] myDataset = controller.getAllEventStrings();
+        myDataset = controller.getAllEventStrings();
         MyAdapter mAdapter = new MyAdapter(myDataset);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -162,7 +163,7 @@ public class EventListActivity extends BaseActivity {
                 // Hide ProgressBar
                 prgDialog.dismiss();
                 // Update SQLite DB with response sent by getusers.php
-                Log.d("MSG: ", "Grabbed Event Successfully = "+response);
+                Log.d("MSG: ", "Grabbed Event Successfully = " + response);
                 updateSQLite(response);
 
             }
@@ -251,6 +252,15 @@ public class EventListActivity extends BaseActivity {
         Intent objIntent = new Intent(getApplicationContext(), EventListActivity.class);
         startActivity(objIntent);
         finish(); //so we don't have the old one on the activity stack
+    }
+
+    //Go to Map View
+    public void goMapViewActivity(View view){
+        Intent intent = new Intent(this, MapViewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("where_clause", "null");
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
 

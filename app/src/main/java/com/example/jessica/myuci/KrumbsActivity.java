@@ -48,11 +48,11 @@ public class KrumbsActivity extends BaseActivity {
                     String mediaJSONUrl = (String) map.get(KCaptureCompleteListener.CAPTURE_MEDIA_JSON_URL);
                     Log.i("KRUMBS-CALLBACK", mediaJSONUrl + ", " + imagePath);
                     Log.d("Krumbs", "finish");
+                    Log.d("Krumbs:", "media Jason url = " + mediaJSONUrl + ", " + imagePath);
                     finish();
                 } else if (completionState == CompletionState.CAPTURE_CANCELLED ||
                         completionState == CompletionState.SDK_NOT_INITIALIZED) {
                     Log.d("Krumbs", "capture_cancelled. CompetionState = " + completionState);
-                    finish();
                 }
             }
         });
