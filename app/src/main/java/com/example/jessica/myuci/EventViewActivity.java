@@ -1,6 +1,7 @@
 package com.example.jessica.myuci;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -174,6 +175,14 @@ public class EventViewActivity extends BaseActivity {
             }
 
         });
+    }
+
+    public void goEventMapView(View view){
+        Intent intent = new Intent(this, MapViewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArray("event_info", event_info);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
 

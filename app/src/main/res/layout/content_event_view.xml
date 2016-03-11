@@ -195,8 +195,18 @@
                 android:textStyle="bold"
                 android:text = "No link provided."
                 android:layout_below="@id/event_description" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/event_view_on_map_button"
+                android:text="@string/view_on_map"
+                android:layout_marginBottom="30dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/event_link"
+                android:onClick="goEventMapView"/>
         </RelativeLayout>
     </ScrollView>
+
 
 </RelativeLayout>
 

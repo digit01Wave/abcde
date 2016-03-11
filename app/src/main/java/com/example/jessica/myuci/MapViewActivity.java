@@ -18,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -63,7 +64,12 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         Bundle b = this.getIntent().getExtras();
-        allEvents = controller.getAllEventStringsWhere(b.getString("where_clause"));
+        if(b.containsKey("event_info")){ //if just a single event
+            allEvents = new String[1][];
+            allEvents[0] = b.getStringArray("event_info");
+        }else {
+            allEvents = controller.getAllEventStringsWhere(b.getString("where_clause"));
+        }
         mapFragment.getMapAsync(this);
     }
 
@@ -82,8 +88,16 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         Log.d("map", "onMapReady");
         mMap = googleMap;
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(uci));
+        if(allEvents.length == 1){
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(allEvents[0][5]), Double.parseDouble(allEvents[0][6]))));
+        }
 
         Log.d("map", "loadedEvents");
+
+        //UI settings controls
+        UiSettings uiSettings = googleMap.getUiSettings();
+        uiSettings.setZoomControlsEnabled(true);
+
         markers = new Marker[allEvents.length];
         for(int i = 0; i < allEvents.length; i ++) {
             //make sure there is a lat long to see
