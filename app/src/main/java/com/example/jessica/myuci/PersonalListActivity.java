@@ -184,7 +184,7 @@ public class PersonalListActivity extends BaseActivity {
                         Toast.makeText(getApplicationContext(), "Remote Sync completed!", Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
-                        Toast.makeText(getApplicationContext(), "Error Occured In Watch Later Sync [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Error Occured In " + table_name + " Sync [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 }
