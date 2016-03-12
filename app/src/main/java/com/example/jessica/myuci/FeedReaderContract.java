@@ -52,13 +52,12 @@ public final class FeedReaderContract {
         public static final String TO_DELETE_TABLE_NAME = "calendar_to_delete";
     }
 
-
-    public static abstract class KrumbsImageEntry{
-        public static final String TABLE_NAME = "krumbs_image";
-        public static final String COLUMN_NAME_IMAGEURL = "image_url";
-        public static final String COLUMN_NAME_LAT = "lat";
-        public static final String COLUMN_NAME_LNG = "lng";
-        public static final String COLUMN_NAME_MOOD = "mood";
+    public static abstract class KrumbsImagesEntry {
+        public static final String TABLE_NAME = "cur_krumbs_images";
+        public static final String COLUMN_NAME_IMAGELINK = "ImageLink";
+        public static final String COLUMN_NAME_LAT = "Latitude";
+        public static final String COLUMN_NAME_LNG = "Longitude";
+        public static final String COLUMN_NAME_MOOD = "Mood";
     }
 
     /* Inner class thad defines server related content*/

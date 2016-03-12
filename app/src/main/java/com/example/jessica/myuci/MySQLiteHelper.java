@@ -88,18 +88,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + WLEntry.TO_DELETE_TABLE_NAME;
     private static final String SQL_DELETE_CALENDAR_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + CalendarEntry.TO_DELETE_TABLE_NAME;
+    private static final String SQL_DELETE_KRUMBS_IMAGES_TABLE =
+            "DROP TABLE IF EXISTS " + KrumbsImagesEntry.TABLE_NAME;
 
-
-    private static final String SQL_CREATE_KRUMBS_IMAGE_TABLE =
-            "DROP TABLE IF EXISTS " + KrumbsImageEntry.TABLE_NAME + ";" +
-            "CREATE TABLE " + KrumbsImageEntry.TABLE_NAME + "( " +
-                    KrumbsImageEntry.COLUMN_NAME_IMAGEURL + TEXT_TYPE + COMMA_SEP +
-                    KrumbsImageEntry.COLUMN_NAME_LAT + REAL_TYPE + COMMA_SEP +
-                    KrumbsImageEntry.COLUMN_NAME_LNG + REAL_TYPE + COMMA_SEP +
-                    KrumbsImageEntry.COLUMN_NAME_MOOD + TEXT_TYPE + COMMA_SEP +
-                    "PRIMARY KEY ( " + KrumbsImageEntry.COLUMN_NAME_IMAGEURL + " )" +
+    private static final String SQL_CREATE_KRUMBS_IMAGES_TABLE =
+                    "CREATE TABLE " + KrumbsImagesEntry.TABLE_NAME + "( " +
+                    KrumbsImagesEntry.COLUMN_NAME_IMAGELINK + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP +
+                    KrumbsImagesEntry.COLUMN_NAME_LAT + REAL_TYPE + COMMA_SEP +
+                    KrumbsImagesEntry.COLUMN_NAME_LNG + REAL_TYPE + COMMA_SEP +
+                    KrumbsImagesEntry.COLUMN_NAME_MOOD + TEXT_TYPE +
                     ")";
-
     public MySQLiteHelper(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
@@ -112,8 +110,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_CALENDAR_TABLE);
         db.execSQL(SQL_CREATE_WATCH_LATER_DELETE_TABLE);
         db.execSQL(SQL_CREATE_CALENDAR_DELETE_TABLE);
-        db.execSQL(SQL_CREATE_KRUMBS_IMAGE_TABLE);
+        db.execSQL(SQL_CREATE_KRUMBS_IMAGES_TABLE);
         Log.d("MSG: ", "Created Event and Watch Later Tables");
+        Log.d("Krumbs", "Krumbs_image_table created!!!!!!!!!!!!!!!!!!!!!");
     }
 
     @Override
@@ -124,6 +123,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_CALENDAR_TABLE);
         db.execSQL(SQL_DELETE_WATCH_LATER_DELETE_TABLE);
         db.execSQL(SQL_DELETE_CALENDAR_DELETE_TABLE);
+        db.execSQL(SQL_DELETE_KRUMBS_IMAGES_TABLE);
         Log.d("MSG: ", "Upgraded Event and Watch Later Tables");
 
         // create fresh tables
@@ -315,7 +315,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 db.insert(CalendarEntry.TO_DELETE_TABLE_NAME, // table
                         null, //nullColumnHack
                         values); // key/value -> keys = column names/ v
-                        // alues = column values
+                // alues = column values
             }
         }
         cursor.close();
@@ -562,11 +562,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Double lat2 = lat + LatLngRange;
         Double lng1 = lng - LatLngRange;
         Double lng2 = lng + LatLngRange;
-        String selectQuery = "SELECT " + KrumbsImageEntry.COLUMN_NAME_IMAGEURL + " FROM " + KrumbsImageEntry.TABLE_NAME  +
-                " WHERE " + KrumbsImageEntry.COLUMN_NAME_LAT + " > " + lat1 + " AND " +
-                KrumbsImageEntry.COLUMN_NAME_LAT + " < " + lat2 + " AND " +
-                KrumbsImageEntry.COLUMN_NAME_LNG + " > " + lng1 + " AND " +
-                KrumbsImageEntry.COLUMN_NAME_LNG + " < " + lng2;
+        String selectQuery = "SELECT " + KrumbsImagesEntry.COLUMN_NAME_IMAGELINK + " FROM " + KrumbsImagesEntry.TABLE_NAME  +
+                " WHERE " + KrumbsImagesEntry.COLUMN_NAME_LAT + " > " + lat1 + " AND " +
+                KrumbsImagesEntry.COLUMN_NAME_LAT + " < " + lat2 + " AND " +
+                KrumbsImagesEntry.COLUMN_NAME_LNG + " > " + lng1 + " AND " +
+                KrumbsImagesEntry.COLUMN_NAME_LNG + " < " + lng2;
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         List imageLinks = new ArrayList();

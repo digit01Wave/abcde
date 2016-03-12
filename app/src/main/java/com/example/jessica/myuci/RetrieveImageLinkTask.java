@@ -3,7 +3,6 @@ package com.example.jessica.myuci;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.util.JsonReader;
 import android.util.Log;
@@ -23,19 +22,6 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
 
     private static long timeRange = 3600000;  //1 hour
     Context context;
-    private static final String TEXT_TYPE = " TEXT";
-    private static final String INT_TYPE = " INTEGER";
-    private static final String REAL_TYPE = " REAL";
-    private static final String COMMA_SEP = ",";
-    private static final String SQL_CREATE_KRUMBS_IMAGE_TABLE =
-            "DROP TABLE IF EXISTS " + FeedReaderContract.KrumbsImageEntry.TABLE_NAME + ";" +
-                    "CREATE TABLE " + FeedReaderContract.KrumbsImageEntry.TABLE_NAME + "( " +
-                    FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_IMAGEURL + TEXT_TYPE + COMMA_SEP +
-                    FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_LAT + REAL_TYPE + COMMA_SEP +
-                    FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_LNG + REAL_TYPE + COMMA_SEP +
-                    FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_MOOD + TEXT_TYPE + COMMA_SEP +
-                    "PRIMARY KEY ( " + FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_IMAGEURL + " )" +
-                    ")";
 
     public RetrieveImageLinkTask(Context context){
         this.context = context;
@@ -61,19 +47,18 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
 
         MySQLiteHelper controller = new MySQLiteHelper(context, null);
         SQLiteDatabase db = controller.getWritableDatabase();
-        //db.execSQL(SQL_CREATE_KRUMBS_IMAGE_TABLE);
-        db.delete(FeedReaderContract.KrumbsImageEntry.TABLE_NAME, null, null);
+        db.delete(FeedReaderContract.KrumbsImagesEntry.TABLE_NAME, null, null);
         //create ContentValues to add key "column"/value
         ContentValues values = new ContentValues();
         if(images != null) {
             for(int i = 0;  i < images.size(); i ++) {
                 KrumbsImageItem image = (KrumbsImageItem)images.get(i);
-                values.put(FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_IMAGEURL, image.getImageLink());
-                values.put(FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_LAT, image.getLat());
-                values.put(FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_LNG, image.getLng());
-                values.put(FeedReaderContract.KrumbsImageEntry.COLUMN_NAME_MOOD, image.getMood());
+                values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_IMAGELINK, image.getImageLink());
+                values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_LAT, image.getLat());
+                values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_LNG, image.getLng());
+                values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_MOOD, image.getMood());
                 try {
-                    db.insert(FeedReaderContract.KrumbsImageEntry.TABLE_NAME,
+                    db.insert(FeedReaderContract.KrumbsImagesEntry.TABLE_NAME,
                             null, //nullColumnHack
                             values );
                     Log.d("Krumbs", "add image to db" + image.getImageLink());

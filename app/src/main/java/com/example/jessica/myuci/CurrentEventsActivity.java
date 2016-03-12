@@ -32,7 +32,7 @@ import static com.example.jessica.myuci.GetLatLng.getlatlngFromAddress;
 
 public class CurrentEventsActivity extends AppCompatActivity {
 
-    private static final int timeRange = 7200000; //2 hours
+    private static final int timeRange = 17200000; //2 hours
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
