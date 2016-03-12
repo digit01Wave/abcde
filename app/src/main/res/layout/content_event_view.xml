@@ -195,6 +195,17 @@
                 android:textStyle="bold"
                 android:text = "No link provided."
                 android:layout_below="@id/event_description" />
+            <TextView
+                android:id="@+id/krumbs_image_link"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dip"
+                android:paddingTop="6dip"
+                android:textColor="#008000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:text = "Krumbs image Link"
+                android:layout_below="@id/event_link" />
         </RelativeLayout>
     </ScrollView>
 

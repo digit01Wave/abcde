@@ -77,31 +77,6 @@ public class StarterApplication extends Application {
                 Log.d("Krumbs", "About to register intent categories");
                 String assetPath = "IntentResourcesExample";
                 KrumbsSDK.registerIntentCategories(assetPath);
-
-                Log.d("Krumbs", "Registered intent categories and now gotta configure stuff");
-
-
-// SDK usage step 3 (optional) - add your Intent Panel view customizations
-
-                // Configure the IntentPanel View (colors & fonts)
-                KIntentPanelConfiguration defaults = KrumbsSDK.getIntentPanelViewConfigurationDefaults();
-                KIntentPanelConfiguration.IntentPanelCategoryTextStyle ts = defaults.getIntentPanelCategoryTextStyle();
-                ts.setTextColor(Color.YELLOW);
-                KIntentPanelConfiguration newDefaults = new KIntentPanelConfiguration.KIntentPanelConfigurationBuilder()
-                        .intentPanelBarColor("#029EE1")
-                        .intentPanelTextStyle(ts)
-                        .build();
-                KrumbsSDK.setIntentPanelViewConfigurationDefaults(newDefaults);
-                Log.d("Krumbs", "BAAM configured panel");
-// SDK usage step 3 (optional) - register users so you can associate their ID (email) with created content with Cloud API
-                // Register user information (if your app requires login)
-                // to improve security on the mediaJSON created.
-                String userEmail = DeviceUtils.getPrimaryUserID(getApplicationContext());
-                KrumbsSDK.registerUser(new KrumbsUser.KrumbsUserBuilder()
-                        .email(userEmail)
-                        .firstName(SDK_STARTER_PROJECT_USER_FN)
-                        .lastName(SDK_STARTER_PROJECT_USER_SN).build());
-
                 Log.d("Krumbs", "got to end of create for starter application");
             } catch (Exception e) {
                 e.printStackTrace();

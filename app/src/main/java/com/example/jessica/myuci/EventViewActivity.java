@@ -14,6 +14,9 @@ import com.example.jessica.myuci.FeedReaderContract.WLEntry;
 import com.example.jessica.myuci.FeedReaderContract.CalendarEntry;
 import com.example.jessica.myuci.FeedReaderContract.ServerEntry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EventViewActivity extends BaseActivity {
     private ProgressDialog prgDialog;
     private MySQLiteHelper controller = new MySQLiteHelper(this, null);
@@ -30,6 +33,7 @@ public class EventViewActivity extends BaseActivity {
     private TextView description;
     private TextView link;
 
+    private TextView krumbs_image_link;
     private Button WLButton;
     private Button CalendarButton;
 
@@ -59,6 +63,7 @@ public class EventViewActivity extends BaseActivity {
         location = (TextView) findViewById(R.id.event_location);
         description = (TextView) findViewById(R.id.event_description);
         link = (TextView) findViewById(R.id.event_link);
+        krumbs_image_link = (TextView) findViewById(R.id.krumbs_image_link);
         WLButton = (Button) findViewById(R.id.event_watch_later_button);
         CalendarButton = (Button) findViewById(R.id.event_calendar_button);
 
@@ -122,6 +127,15 @@ public class EventViewActivity extends BaseActivity {
                     image_link.setText(event_info[10]);
                 }
 
+                if(event_info[5] != null && event_info[6] != null){ // has lat lng info
+                    List links = controller.getKrumbsImageNearMe(Double.parseDouble(event_info[5]), Double.parseDouble(event_info[6]));
+                    String krumbsImageLinks = "";
+                    for(int i = 0; i < links.size(); i ++){
+                        krumbsImageLinks += links.get(i);
+                        krumbsImageLinks += '\n';
+                    }
+                    krumbs_image_link.setText(krumbsImageLinks);
+                }
                 //Watch Later button
                 if (controller.hasPersonalItem(FeedReaderContract.WLEntry.TABLE_NAME,UserInfo.USER_ID, event_info[0])) {
                     WLButton.setText(getString(R.string.delete_from_watch_later));

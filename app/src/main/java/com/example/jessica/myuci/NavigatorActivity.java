@@ -66,10 +66,9 @@ public class NavigatorActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public void goToCurrentListActivit(View view){
-
+    public void goToCurrentListActivity(View view){
+        Intent intent = new Intent(this, CurrentEventsActivity.class);
+        startActivity(intent);
     }
-
-
 
 }

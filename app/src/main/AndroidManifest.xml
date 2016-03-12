@@ -86,7 +86,10 @@
         <activity
             android:name=".MapViewActivity"
             android:label="@string/title_activity_map_view" />
-        <activity android:name=".CurrentEventsActivity"></activity>
+
+        <activity android:name=".CurrentEventsActivity"
+            android:label="@string/label_activity_current_event"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
