@@ -15,6 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
@@ -46,6 +49,11 @@ public class EventListActivity extends BaseActivity {
     ProgressDialog prgDialog;
     String[] queryValues;
     String[][] myDataset;
+
+    //Spinner
+    Spinner spinner;
+    ArrayAdapter<CharSequence> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +90,61 @@ public class EventListActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        // Spinner
+        spinner=(Spinner) findViewById(R.id.spinner);
+        adapter=ArrayAdapter.createFromResource(this, R.array.sort, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    myDataset = controller.getAllEventStrings();
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                if (position == 1) {
+                    myDataset = controller.getAllEventStrings("start_time");
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                if (position == 2) {
+                    myDataset = controller.getAllEventStrings("end_time");
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                if (position == 3) {
+                    myDataset = controller.getAllEventStrings("location");
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
         //to solve recycler view's onclick problem

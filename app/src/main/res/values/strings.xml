@@ -61,5 +61,11 @@
     <string name="title_activity_map_view">Map</string>
     <string name="label_activity_current_event">CurrentEventActivity</string>
 
+    <string-array name="sort">
+        <item>default</item>
+        <item>start time</item>
+        <item>end time</item>
+        <item>location</item>
+    </string-array>
 
 </resources>
