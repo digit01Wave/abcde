@@ -58,6 +58,7 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_LAT = "Latitude";
         public static final String COLUMN_NAME_LNG = "Longitude";
         public static final String COLUMN_NAME_MOOD = "Mood";
+        public static final String COLUMN_NAME_SCORE = "Score";
     }
 
     /* Inner class thad defines server related content*/

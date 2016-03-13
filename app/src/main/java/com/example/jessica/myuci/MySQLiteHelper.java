@@ -96,7 +96,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     KrumbsImagesEntry.COLUMN_NAME_IMAGELINK + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP +
                     KrumbsImagesEntry.COLUMN_NAME_LAT + REAL_TYPE + COMMA_SEP +
                     KrumbsImagesEntry.COLUMN_NAME_LNG + REAL_TYPE + COMMA_SEP +
-                    KrumbsImagesEntry.COLUMN_NAME_MOOD + TEXT_TYPE +
+                    KrumbsImagesEntry.COLUMN_NAME_MOOD + TEXT_TYPE + COMMA_SEP +
+                            KrumbsImagesEntry.COLUMN_NAME_SCORE + INT_TYPE +
                     ")";
     public MySQLiteHelper(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -578,5 +579,34 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
         database.close();
         return imageLinks;
+    }
+    public double getScoreOfEvent(Double lat, Double lng) {
+        Log.d("Krumbs", "get image near " + lat + " " + lng);
+        Double lat1 = lat - LatLngRange;
+        Double lat2 = lat + LatLngRange;
+        Double lng1 = lng - LatLngRange;
+        Double lng2 = lng + LatLngRange;
+        String selectQuery = "SELECT SUM( " + KrumbsImagesEntry.COLUMN_NAME_SCORE + " ), " +
+                "COUNT(*) FROM " + KrumbsImagesEntry.TABLE_NAME  +
+                " WHERE " + KrumbsImagesEntry.COLUMN_NAME_LAT + " > " + lat1 + " AND " +
+                KrumbsImagesEntry.COLUMN_NAME_LAT + " < " + lat2 + " AND " +
+                KrumbsImagesEntry.COLUMN_NAME_LNG + " > " + lng1 + " AND " +
+                KrumbsImagesEntry.COLUMN_NAME_LNG + " < " + lng2;
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        double avgScore = 0;
+        if (cursor.moveToFirst()) {
+            if(cursor.getString(0) != null) {
+                double totalScore = Double.parseDouble(cursor.getString(0));
+                double totalCount = Double.parseDouble(cursor.getString(1));
+                avgScore = totalScore / totalCount;
+                Log.d("Krumbs", "total score: " + totalScore + " total count: " + totalCount);
+            }
+        }
+        Log.d("Krumbs", "avg score is " + avgScore);
+        cursor.close();
+        database.close();
+        return avgScore;
+
     }
 }

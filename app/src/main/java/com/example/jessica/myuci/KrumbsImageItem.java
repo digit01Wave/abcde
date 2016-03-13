@@ -8,11 +8,13 @@ public class KrumbsImageItem {
     private double lat;
     private double lng;
     private String mood;
-    public KrumbsImageItem(String link, double lat, double lng, String mood){
+    private double score;
+    public KrumbsImageItem(String link, double lat, double lng, String mood, double score){
         this.imageLink = link;
         this.lat = lat;
         this.lng = lng;
         this.mood = mood;
+        this.score = score;
     }
     public String getImageLink() {
         return imageLink;
@@ -25,5 +27,8 @@ public class KrumbsImageItem {
     }
     public String getMood() {
         return mood;
+    }
+    public double getScore() {
+        return score;
     }
 }

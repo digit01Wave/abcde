@@ -23,6 +23,11 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
     private static long timeRange = 3600000;  //1 hour
     Context context;
 
+    private static final int happyScore = 3;
+    private static final int upsetScore = -5;
+    private static final int loveScore = 5;
+    private static final int takingNotesScore = 2;
+    private static final int neutralScore = 0;
     public RetrieveImageLinkTask(Context context){
         this.context = context;
     }
@@ -57,11 +62,12 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
                 values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_LAT, image.getLat());
                 values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_LNG, image.getLng());
                 values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_MOOD, image.getMood());
+                values.put(FeedReaderContract.KrumbsImagesEntry.COLUMN_NAME_SCORE, image.getScore());
                 try {
                     db.insert(FeedReaderContract.KrumbsImagesEntry.TABLE_NAME,
                             null, //nullColumnHack
                             values );
-                    Log.d("Krumbs", "add image to db" + image.getImageLink());
+                    Log.d("Krumbs", "add image to db, link: " + image.getImageLink());
                 } catch (Exception e) {
                     Log.d("Krumbs", "failed to add image");
                 }
@@ -107,13 +113,28 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
                 List<String> tmp = readImageLink(reader);
                 link = tmp.get(0);
                 mood = tmp.get(1);
+                Log.d("Krumbs-mood", "mood: " + mood);
             } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
+        double score = 0;
+        if (mood.equals("Happy")) {
+            score = happyScore;
+        } else if (mood.equals("Upset")) {
+            score = upsetScore;
+        } else if (mood.equals("Love")) {
+            score = loveScore;
+        } else if (mood.equals("Taking notes")) {
+            score = takingNotesScore;
+        } else if (mood.equals("Neutral")) {
+            score = neutralScore;
+        } else {
+            Log.d("Krumbs", "found no matching mood");
+        }
         if(link != null)
-            return new KrumbsImageItem(link, lat, lng, mood);
+            return new KrumbsImageItem(link, lat, lng, mood, score);
         return null;
     }
     private List readPoint(JsonReader reader) throws IOException {
@@ -142,6 +163,7 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
         return doubles;
     }
     private List readImageLink(JsonReader reader) throws  IOException {
+        Log.d("Krumbs", "readImageLink and mood");
         List linkNmood = new ArrayList();
         String link = null;
         reader.beginObject();
@@ -156,7 +178,9 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
             } else if(name.equals("intent_used_synonym")) {
                 reader.beginObject();
                 reader.nextName();
-                linkNmood.add(reader.nextString());
+                String mood = reader.nextString();
+                linkNmood.add(mood);
+                Log.d("Krumbs", "mood!!!!!!!!!!!!! " + mood);
                 reader.endObject();
             } else {
                 reader.skipValue();

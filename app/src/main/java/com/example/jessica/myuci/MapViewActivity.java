@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -37,8 +38,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private Integer clickedMarkerId;
     String[][] allEvents;
 
-    MySQLiteHelper controller = new MySQLiteHelper(this, null);
-
     public static final CameraPosition uci =
             new CameraPosition.Builder().target(new LatLng(33.645898, -117.842703))
                     .zoom(16.0f)
@@ -55,6 +54,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView description;
     private TextView link;
 
+    private MySQLiteHelper controller = new MySQLiteHelper(this, null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,8 +102,16 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
         for(int i = 0; i < allEvents.length; i ++) {
             //make sure there is a lat long to see
             if(!(allEvents[i][5] == null)){
+                double score = controller.getScoreOfEvent(Double.parseDouble(allEvents[i][5]), Double.parseDouble(allEvents[i][6]));
+                Log.d("Krumbs", "score!!!!!!!!!!!!!!!!!!!!" + score);
+                float color = BitmapDescriptorFactory.HUE_AZURE;
+                if(score < 0) {
+                    color = BitmapDescriptorFactory.HUE_RED;
+                } else if(score > 0) {
+                    color = BitmapDescriptorFactory.HUE_GREEN;
+                }
                 markers[i] = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(allEvents[i][5]), Double.parseDouble(allEvents[i][6]))).
-                        title(allEvents[i][1]));
+                        title(allEvents[i][1]).icon(BitmapDescriptorFactory.defaultMarker(color)));
 
             }
         }

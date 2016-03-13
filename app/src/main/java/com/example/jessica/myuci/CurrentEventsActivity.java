@@ -32,7 +32,6 @@ import static com.example.jessica.myuci.GetLatLng.getlatlngFromAddress;
 
 public class CurrentEventsActivity extends AppCompatActivity {
 
-    private static final int timeRange = 17200000; //2 hours
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
@@ -64,16 +63,10 @@ public class CurrentEventsActivity extends AppCompatActivity {
         prgDialog.setCancelable(false);
 
         syncSQLiteMySQLDB();
-
-
-        Log.d("Krumbs", "load current image");
-        new RetrieveImageLinkTask(getApplicationContext()).execute();
-
         Long curTimeStamp = System.currentTimeMillis();
-        String start_time = Long.toString(curTimeStamp - timeRange);  //1 hour
-        String end_time = Long.toString(curTimeStamp + timeRange);
-        String whereClause = FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME + " > " + start_time +
-                " AND " + FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME + " < " + end_time;
+        //select ongoing events
+        String whereClause = FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME + " < " + curTimeStamp +
+                " AND " + FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME + " > " + curTimeStamp;
         myDataset = controller.getAllEventStringsWhere(whereClause);
         MyAdapter mAdapter = new MyAdapter(myDataset);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -261,7 +254,11 @@ public class CurrentEventsActivity extends AppCompatActivity {
     public void goMapViewActivity(View view){
         Intent intent = new Intent(this, MapViewActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("where_clause", "null");
+        Long curTimeStamp = System.currentTimeMillis();
+        //select ongoing events
+        String whereClause = FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME + " < " + curTimeStamp +
+                " AND " + FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME + " > " + curTimeStamp;
+        bundle.putString("where_clause", whereClause);
         intent.putExtras(bundle);
         startActivity(intent);
     }
