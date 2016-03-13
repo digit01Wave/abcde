@@ -50,7 +50,7 @@ public class EventListActivity extends BaseActivity {
     String[] queryValues;
     String[][] myDataset;
 
-    //Spinner
+    //Spinner, learned how to use spinner from https://www.youtube.com/watch?v=28jA5-mO8K8
     Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
 
@@ -90,7 +90,7 @@ public class EventListActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        // Spinner, learn how to use spinner from https://www.youtube.com/watch?v=28jA5-mO8K8
+        // Spinner
         spinner=(Spinner) findViewById(R.id.spinner);
         adapter=ArrayAdapter.createFromResource(this, R.array.sort, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
