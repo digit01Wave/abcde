@@ -50,7 +50,7 @@ public class EventListActivity extends BaseActivity {
     String[] queryValues;
     String[][] myDataset;
 
-    //Spinner
+    //Spinner, learned how to use spinner from https://www.youtube.com/watch?v=28jA5-mO8K8
     Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
 
