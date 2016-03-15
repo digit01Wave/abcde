@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@drawable/uci6"
     tools:context="com.example.jessica.myuci.NavigatorActivity">
 
     <android.support.design.widget.AppBarLayout

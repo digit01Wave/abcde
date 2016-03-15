@@ -2,6 +2,7 @@ package com.example.jessica.myuci;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -65,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
         if (saveLogin == true) {
             input_email.setText(loginPreferences.getString("username", ""));
             input_password.setText(loginPreferences.getString("password", ""));
+            input_email.setTextColor(Color.parseColor("#E88B00"));
+            input_password.setTextColor(Color.parseColor("#E88B00"));
             saveLoginCheckBox.setChecked(true);
         }
 

@@ -77,6 +77,7 @@ public class EventViewActivity extends BaseActivity {
 
                 //set textViews
                 title.setText(event_info[1]);
+                
                 if (event_info[2] == null) { //host does not need to be there
                     hoster.setVisibility(View.GONE);
                 } else {
