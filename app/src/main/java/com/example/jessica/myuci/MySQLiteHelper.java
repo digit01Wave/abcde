@@ -30,7 +30,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String INT_TYPE = " INTEGER";
     private static final String REAL_TYPE = " REAL";
     private static final String COMMA_SEP = ",";
-    private static final Double LatLngRange = 0.01;
+    private static final Double LatLngRange = 0.001;
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE " + EventEntry.TABLE_NAME + " (" +
                     EventEntry.COLUMN_NAME_EVENT_ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
@@ -448,7 +448,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 db.delete(WLEntry.TO_DELETE_TABLE_NAME, PersonalEntry.COLUMN_NAME_USER_ID + " = '" + user_id +
                         "' AND " + PersonalEntry.COLUMN_NAME_EVENT_ID + " = " + event_id, null);
             } else {
-                db.delete(WLEntry.TO_DELETE_TABLE_NAME, PersonalEntry.COLUMN_NAME_USER_ID + " = '" + user_id +
+                db.delete(CalendarEntry.TO_DELETE_TABLE_NAME, PersonalEntry.COLUMN_NAME_USER_ID + " = '" + user_id +
                         "' AND " + PersonalEntry.COLUMN_NAME_EVENT_ID + " = " + event_id, null);
             }
         }
