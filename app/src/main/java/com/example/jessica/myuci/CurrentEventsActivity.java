@@ -2,12 +2,10 @@ package com.example.jessica.myuci;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,12 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.jessica.myuci.FeedReaderContract.EventEntry;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,15 +26,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import cz.msebera.android.httpclient.Header;
 
 import static com.example.jessica.myuci.GetLatLng.getlatlngFromAddress;
 
-
-public class EventListActivity extends BaseActivity {
+public class CurrentEventsActivity extends AppCompatActivity {
 
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);
@@ -50,15 +40,10 @@ public class EventListActivity extends BaseActivity {
     String[] queryValues;
     String[][] myDataset;
 
-    //Spinner, learned how to use spinner from https://www.youtube.com/watch?v=28jA5-mO8K8
-    Spinner spinner;
-    ArrayAdapter<CharSequence> adapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_list);
+        setContentView(R.layout.activity_current_events);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -78,8 +63,11 @@ public class EventListActivity extends BaseActivity {
         prgDialog.setCancelable(false);
 
         syncSQLiteMySQLDB();
-
-        myDataset = controller.getAllEventStrings();
+        Long curTimeStamp = System.currentTimeMillis();
+        //select ongoing events
+        String whereClause = FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME + " < " + curTimeStamp +
+                " AND " + FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME + " > " + curTimeStamp;
+        myDataset = controller.getAllEventStringsWhere(whereClause);
         MyAdapter mAdapter = new MyAdapter(myDataset);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -90,61 +78,6 @@ public class EventListActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        // Spinner
-        spinner=(Spinner) findViewById(R.id.spinner);
-        adapter=ArrayAdapter.createFromResource(this, R.array.sort, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    myDataset = controller.getAllEventStrings();
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
-                }
-                if (position == 1) {
-                    myDataset = controller.getAllEventStrings("start_time");
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
-                }
-                if (position == 2) {
-                    myDataset = controller.getAllEventStrings("end_time");
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
-                }
-                if (position == 3) {
-                    myDataset = controller.getAllEventStrings("location");
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
         //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/
         //to solve recycler view's onclick problem
@@ -155,7 +88,7 @@ public class EventListActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
                 MyAdapter a = (MyAdapter) recyclerView.getAdapter();
                 bundle.putStringArray("event_info", a.getDatasetItem(position));
-                bundle.putString("list_title", EventEntry.TABLE_NAME);
+                bundle.putString("list_title", FeedReaderContract.EventEntry.TABLE_NAME);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -260,30 +193,30 @@ public class EventListActivity extends BaseActivity {
             JSONArray arr = new JSONArray(response);
             Log.d("MSG: ", "JSON array length = " + Integer.toString(arr.length()));
             // If array elements is not zero and is not equal to what we already have
-            if(arr.length() != 0 && arr.length() != controller.getTableLength(EventEntry.TABLE_NAME)){
+            if(arr.length() != 0 && arr.length() != controller.getTableLength(FeedReaderContract.EventEntry.TABLE_NAME)){
                 // Loop through each array element, get JSON object which has userid and username
                 for (int i = 0; i < arr.length(); i++) {
                     // Get JSON object
                     JSONObject obj = (JSONObject) arr.get(i);
-                    queryValues = new String[EventEntry.NUM_COLUMNS];
+                    queryValues = new String[FeedReaderContract.EventEntry.NUM_COLUMNS];
 
                     // DB QueryValues Object to insert into SQLite
-                    queryValues[0] = obj.get(EventEntry.COLUMN_NAME_EVENT_ID).toString();
-                    queryValues[1] = obj.get(EventEntry.COLUMN_NAME_TITLE).toString();
-                    queryValues[2] = obj.get(EventEntry.COLUMN_NAME_HOSTER).toString();
-                    queryValues[3] = obj.get(EventEntry.COLUMN_NAME_START_TIME).toString();
-                    queryValues[4] = obj.get(EventEntry.COLUMN_NAME_END_TIME).toString();
-                    queryValues[5] = obj.get(EventEntry.COLUMN_NAME_LAT).toString();
-                    queryValues[6] = obj.get(EventEntry.COLUMN_NAME_LON).toString();
-                    queryValues[7] = obj.get(EventEntry.COLUMN_NAME_LOCATION).toString();
-                    queryValues[8] = obj.get(EventEntry.COLUMN_NAME_DESCRIPTION).toString();
-                    queryValues[9] = obj.get(EventEntry.COLUMN_NAME_LINK).toString();
-                    queryValues[10] = obj.get(EventEntry.COLUMN_NAME_IMAGE_LINK).toString();
-                    queryValues[11] = obj.get(EventEntry.COLUMN_NAME_SOURCE_TYPE).toString();
-                    queryValues[12] = obj.get(EventEntry.COLUMN_NAME_SOURCE_SUBTYPE).toString();
+                    queryValues[0] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_EVENT_ID).toString();
+                    queryValues[1] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_TITLE).toString();
+                    queryValues[2] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_HOSTER).toString();
+                    queryValues[3] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME).toString();
+                    queryValues[4] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME).toString();
+                    queryValues[5] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_LAT).toString();
+                    queryValues[6] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_LON).toString();
+                    queryValues[7] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_LOCATION).toString();
+                    queryValues[8] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_DESCRIPTION).toString();
+                    queryValues[9] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_LINK).toString();
+                    queryValues[10] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_IMAGE_LINK).toString();
+                    queryValues[11] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_SOURCE_TYPE).toString();
+                    queryValues[12] = obj.get(FeedReaderContract.EventEntry.COLUMN_NAME_SOURCE_SUBTYPE).toString();
                     //if no lat or lon, then try and generate them from location
                     if(queryValues[5].equals("null") || queryValues[6].equals("null")){
-                        LatLng loc = getlatlngFromAddress(EventListActivity.this, queryValues[7] + " Irvine, CA");
+                        LatLng loc = getlatlngFromAddress(CurrentEventsActivity.this, queryValues[7] + " Irvine, CA");
                         if(loc != null){
                             queryValues[5] = Double.toString(loc.latitude);
                             queryValues[6] = Double.toString(loc.longitude);
@@ -321,7 +254,11 @@ public class EventListActivity extends BaseActivity {
     public void goMapViewActivity(View view){
         Intent intent = new Intent(this, MapViewActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("where_clause", "null");
+        Long curTimeStamp = System.currentTimeMillis();
+        //select ongoing events
+        String whereClause = FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME + " < " + curTimeStamp +
+                " AND " + FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME + " > " + curTimeStamp;
+        bundle.putString("where_clause", whereClause);
         intent.putExtras(bundle);
         startActivity(intent);
     }

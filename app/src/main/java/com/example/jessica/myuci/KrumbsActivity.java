@@ -31,7 +31,7 @@ public class KrumbsActivity extends BaseActivity {
         KrumbsSDK.startCapture(containerId, this, new KCaptureCompleteListener() {
             @Override
             public void captureCompleted(CompletionState completionState, boolean audioCaptured, Map<String, Object> map) {
-                // DEBUG LOG
+
                 if (completionState != null) {
                     Log.d("Krumbs", completionState.toString());
                 }
@@ -39,20 +39,21 @@ public class KrumbsActivity extends BaseActivity {
                     // The local image url for your capture
                     String imagePath = (String) map.get(KCaptureCompleteListener.CAPTURE_MEDIA_IMAGE_PATH);
                     Log.d("Krumbs", "imagePath: " + imagePath);
+
                     if (audioCaptured) {
                         // The local audio url for your capture (if user decided to record audio)
                         String audioPath = (String) map.get(KCaptureCompleteListener.CAPTURE_MEDIA_AUDIO_PATH);
-                        Log.d("Krumbs", "imagePath: " + audioPath);
+                        Log.d("Krumbs", "audioPath: " + audioPath);
                     }
                     // The mediaJSON url for your capture
                     String mediaJSONUrl = (String) map.get(KCaptureCompleteListener.CAPTURE_MEDIA_JSON_URL);
                     Log.i("KRUMBS-CALLBACK", mediaJSONUrl + ", " + imagePath);
                     Log.d("Krumbs", "finish");
+                    Log.d("Krumbs:", "media Jason url = " + mediaJSONUrl + ", " + imagePath);
                     finish();
                 } else if (completionState == CompletionState.CAPTURE_CANCELLED ||
                         completionState == CompletionState.SDK_NOT_INITIALIZED) {
-                    Log.d("Krumbs", "capture_cancelled");
-                    finish();
+                    Log.d("Krumbs", "capture_cancelled. CompetionState = " + completionState);
                 }
             }
         });

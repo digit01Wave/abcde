@@ -34,27 +34,25 @@ public class NavigatorActivity extends BaseActivity {
             }
         });
 
+
+        Log.d("Krumbs", "load current image");
+        new RetrieveImageLinkTask(getApplicationContext()).execute();
+
         //KrumbsSDK.initialize(getApplicationContext(), "zmmzAIzwM65XahnKb1lmD1ij7z4J2bToqRRIuGDH", "bJI7wx5HafWH9x6icjJ9RtMQEZf4XxpoOtX6TJwm");
 
     }
 
-    public void goLoginActivity(View view){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void goPopulateDatabaseActivity(View view){
-        Intent intent = new Intent(this, PopulateDatabaseActivity.class);
-        startActivity(intent);
-    }
 
     public void goEventListActivity(View view){
         Intent intent = new Intent(this, EventListActivity.class);
         startActivity(intent);
     }
 
-    public void goTestActivity(View view){
-        Intent intent = new Intent(this, TestActivity.class);
+    public void goCalendarActivity(View view){
+        Intent intent = new Intent(this, PersonalListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("table_name", FeedReaderContract.CalendarEntry.TABLE_NAME);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 
@@ -64,11 +62,16 @@ public class NavigatorActivity extends BaseActivity {
     }
 
     public void goWatchLaterListActivity(View view){
-        Intent intent = new Intent(this, WatchLaterListActivity.class);
+        Intent intent = new Intent(this, PersonalListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("table_name", FeedReaderContract.WLEntry.TABLE_NAME);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 
-
-
+    public void goToCurrentListActivity(View view){
+        Intent intent = new Intent(this, CurrentEventsActivity.class);
+        startActivity(intent);
+    }
 
 }
