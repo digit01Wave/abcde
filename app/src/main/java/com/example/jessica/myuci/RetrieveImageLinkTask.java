@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
 
-    private static long timeRange = 3600000;  //1 hour
+    private static long timeRange = 36000000;  //10 hour
     Context context;
 
     private static final int happyScore = 3;
@@ -175,7 +175,7 @@ public class RetrieveImageLinkTask extends AsyncTask<Void, Void, Void> {
                 link = reader.nextString();
                 linkNmood.add(link);
                 reader.endObject();
-            } else if(name.equals("intent_used_synonym")) {
+            } else if(name.equals("intent_name")) {
                 reader.beginObject();
                 reader.nextName();
                 String mood = reader.nextString();

@@ -301,7 +301,7 @@ public class CurrentEventsActivity extends AppCompatActivity {
 
     // Reload MainActivity
     public void reloadActivity() {
-        Intent objIntent = new Intent(getApplicationContext(), EventListActivity.class);
+        Intent objIntent = new Intent(getApplicationContext(), CurrentEventsActivity.class);
         startActivity(objIntent);
         finish(); //so we don't have the old one on the activity stack
     }

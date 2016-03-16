@@ -17,6 +17,7 @@ import com.example.jessica.myuci.FeedReaderContract.ServerEntry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class EventViewActivity extends BaseActivity {
     private ProgressDialog prgDialog;
@@ -74,7 +75,13 @@ public class EventViewActivity extends BaseActivity {
                 Bundle extras = getIntent().getExtras();
                 event_info = extras.getStringArray("event_info");
                 if(event_info != null){
-                    img = FeedReaderContract.getBitmapFromURL(event_info[10]);
+                    try {
+                        img = new DownloadImageTask().execute(event_info[10]).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 ///

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Jessica on 3/15/2016.
@@ -45,8 +46,14 @@ public class MyImageRecyclerAdapter extends RecyclerView.Adapter<MyImageRecycler
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        Bitmap pic = FeedReaderContract.getBitmapFromURL(itemsData.get(position));
-        viewHolder.krumbsImage.setImageBitmap(pic);
+        try {
+            Bitmap pic = new DownloadImageTask().execute(itemsData.get(position)).get();
+            viewHolder.krumbsImage.setImageBitmap(pic);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
