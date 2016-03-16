@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -15,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/event_watch_later_button"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/centerPoint"/>
     <TextView
@@ -29,33 +28,29 @@
         android:layout_height="wrap_content"
         android:id="@+id/event_calendar_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
+
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/centerPoint"/>
+        android:layout_toRightOf="@id/centerPoint"/>
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/event_scroll_view"
         android:layout_below="@id/event_watch_later_button">
+
         <RelativeLayout
             android:id="@+id/form_layout"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="fill_parent">
 
-            <TextView
+
+            <ImageView
                 android:id="@+id/image"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="6dip"
-                android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
-                android:textSize="17sp"
-                android:text="@string/image_placeholder"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/default_uci" />
 
             <TextView
                 android:id="@+id/event_title"
@@ -63,7 +58,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:text="@string/title_placeholder"
                 android:textStyle="bold"
@@ -76,7 +70,6 @@
                 android:layout_below="@id/event_title"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="@string/hoster_placeholder" />
@@ -87,7 +80,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="@string/start_time_title"
@@ -99,7 +91,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="@string/start_time_placeholder"
@@ -112,7 +103,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="@string/end_time_title"
@@ -124,7 +114,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="@string/end_time_placeholder"
@@ -137,7 +126,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="Location: "
@@ -150,7 +138,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text = "Place Placeholder"
@@ -165,7 +152,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text="Description: "
@@ -177,7 +163,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:text = "No description provided."
@@ -190,7 +175,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="6dip"
                 android:paddingTop="6dip"
-                android:textColor="#EF9BA0"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:autoLink="web"
@@ -198,28 +182,35 @@
                 android:text = "No link provided."
                 android:layout_below="@id/event_description" />
             <TextView
-                android:id="@+id/krumbs_image_link"
-                android:layout_width="fill_parent"
+                android:id="@+id/centerScrollPoint"
+                android:text=""
+                android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:paddingLeft="6dip"
-                android:paddingTop="6dip"
-                android:textColor="#008000"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:text = "Krumbs image Link"
-                android:layout_below="@id/event_link" />
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/event_link"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/event_view_on_map_button"
                 android:text="@string/view_on_map"
+                android:layout_alignParentLeft="true"
                 android:layout_marginBottom="30dp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/krumbs_image_link"
+                android:layout_toLeftOf="@id/centerScrollPoint"
+                android:layout_below="@id/event_link"
                 android:onClick="goEventMapView"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/event_krumbs_view_button"
+                android:layout_centerHorizontal="true"
+                android:text="@string/krumbs_button_view_label"
+                android:layout_marginBottom="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@id/centerScrollPoint"
+                android:layout_below="@id/event_link"
+                android:onClick="goKrumbsView"/>
         </RelativeLayout>
     </ScrollView>
-
-
 </RelativeLayout>
 

@@ -17,6 +17,7 @@
     <string name="title_activity_event_view">EventViewActivity</string>
     <string name="title_activity_krumbs">KrumbsActivity</string>
     <string name="title_activity_personal_list">PersonalListActivity</string>
+    <string name="title_activity_watch_later_list">WatchLaterListActivity</string>
 
     <!--KRUMBS LABELS-->
     <string name="krumbs_button_label">Krumbs Capture</string>
@@ -35,16 +36,15 @@
     <string name="end_time_title">End Time: </string>
 
     <!--PLACEHOLDERS-->
-    <string name="title_placeholder">Title Placeholder</string>
-    <string name="hoster_placeholder">Host Placeholder</string>
-    <string name="time_span_placeholder">Time Span Placeholder</string>
+    <string name="title_placeholder">Unknown Title</string>
+    <string name="hoster_placeholder">No Host</string>
     <string name="start_time_placeholder">Start Time Placeholder</string>
-    <string name="end_time_placeholder">End Time Placeholder</string>
+    <string name="end_time_placeholder">TBA</string>
     <string name="location_placeholder">Location Placeholder</string>
     <string name="description_placeholder">No description provided.</string>
     <string name="link_placeholder">No link provided.</string>
     <string name="image_placeholder">No image provided.</string>
-    <string name="title_activity_watch_later_list">WatchLaterListActivity</string>
+    <string name="krumbs_image_placeholder">No Krumbs Images Taken.</string>
 
     <!--BUTTON LABELS-->
     <string name="add_to_watch_later">Add to Watch Later</string>
@@ -53,6 +53,8 @@
     <string name="delete_from_calendar">Remove from Calendar</string>
     <string name="map_view">MapView</string>
     <string name="view_on_map">View On Map</string>
+    <string name="view_event">View Full Event</string>
+    <string name="krumbs_button_view_label">See Krumbs</string>
 
 
     <!--ACTION BAR TITLES-->
@@ -67,5 +69,6 @@
         <item>end time</item>
         <item>location</item>
     </string-array>
+    <string name="title_activity_krumbs_list">KrumbsListActivity</string>
 
 </resources>

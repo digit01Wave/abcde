@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -40,6 +43,11 @@ public class CurrentEventsActivity extends AppCompatActivity {
     String[] queryValues;
     String[][] myDataset;
 
+    //Spinner, learned how to use spinner from https://www.youtube.com/watch?v=28jA5-mO8K8
+    Spinner spinner;
+    ArrayAdapter<CharSequence> adapter;
+    String whereClause;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,14 +56,6 @@ public class CurrentEventsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(this);
@@ -65,7 +65,7 @@ public class CurrentEventsActivity extends AppCompatActivity {
         syncSQLiteMySQLDB();
         Long curTimeStamp = System.currentTimeMillis();
         //select ongoing events
-        String whereClause = FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME + " < " + curTimeStamp +
+        whereClause = FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME + " < " + curTimeStamp +
                 " AND " + FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME + " > " + curTimeStamp;
         myDataset = controller.getAllEventStringsWhere(whereClause);
         MyAdapter mAdapter = new MyAdapter(myDataset);
@@ -77,6 +77,62 @@ public class CurrentEventsActivity extends AppCompatActivity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        // Spinner
+        spinner=(Spinner) findViewById(R.id.spinner);
+        adapter=ArrayAdapter.createFromResource(this, R.array.sort, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    myDataset = controller.getAllEventStringsWhere(whereClause);
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                if (position == 1) {
+                    myDataset = controller.getAllEventStringsWhereOrder(whereClause, FeedReaderContract.EventEntry.COLUMN_NAME_START_TIME);
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                if (position == 2) {
+                    myDataset = controller.getAllEventStringsWhereOrder(whereClause, FeedReaderContract.EventEntry.COLUMN_NAME_END_TIME);
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+                if (position == 3) {
+                    myDataset = controller.getAllEventStringsWhereOrder(whereClause, FeedReaderContract.EventEntry.COLUMN_NAME_LOCATION);
+                    MyAdapter mAdapter = new MyAdapter(myDataset);
+                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    mRecyclerView.setHasFixedSize(true);
+                    // use a linear layout manager
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
         //below is a solution created by http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/

@@ -61,7 +61,7 @@
         android:id="@+id/current_button"
         android:layout_below="@+id/calendar_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="30dp"
         android:onClick="goToCurrentListActivity"/>
 
 

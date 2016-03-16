@@ -2,13 +2,13 @@ package com.example.jessica.myuci;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.jessica.myuci.FeedReaderContract.UserInfo;
 import com.example.jessica.myuci.FeedReaderContract.WLEntry;
@@ -23,9 +23,10 @@ public class EventViewActivity extends BaseActivity {
     private MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
     private String[] event_info;
+    private ArrayList<String> krumbsLinkArray = new ArrayList<String>();
 
 
-    private TextView image_link;
+    private ImageView image_link;
     private TextView title;
     private TextView hoster;
     private TextView start_time;
@@ -33,6 +34,7 @@ public class EventViewActivity extends BaseActivity {
     private TextView location;
     private TextView description;
     private TextView link;
+    private Bitmap img;
 
     private TextView krumbs_image_link;
     private Button WLButton;
@@ -45,18 +47,9 @@ public class EventViewActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //bind views
-        image_link = (TextView) findViewById(R.id.image);
+        image_link = (ImageView) findViewById(R.id.image);
         title = (TextView) findViewById(R.id.event_title);
         hoster = (TextView) findViewById(R.id.event_hoster);
         start_time = (TextView) findViewById(R.id.event_start_time);
@@ -64,7 +57,6 @@ public class EventViewActivity extends BaseActivity {
         location = (TextView) findViewById(R.id.event_location);
         description = (TextView) findViewById(R.id.event_description);
         link = (TextView) findViewById(R.id.event_link);
-        krumbs_image_link = (TextView) findViewById(R.id.krumbs_image_link);
         WLButton = (Button) findViewById(R.id.event_watch_later_button);
         CalendarButton = (Button) findViewById(R.id.event_calendar_button);
 
@@ -81,7 +73,9 @@ public class EventViewActivity extends BaseActivity {
                 //do long operations like image gathering here
                 Bundle extras = getIntent().getExtras();
                 event_info = extras.getStringArray("event_info");
-
+                if(event_info != null){
+                    img = FeedReaderContract.getBitmapFromURL(event_info[10]);
+                }
 
                 ///
 
@@ -121,22 +115,16 @@ public class EventViewActivity extends BaseActivity {
                 } else {
                     link.setText(event_info[9]);
                 }
-                if(event_info[10] == null) { //if image_link is emty
-                    //make sure you do something here
-
-
-                } else {
-                    image_link.setText(event_info[10]);
+                if(event_info[10] != null && img != null) { //if image_link is not empty
+                    image_link.setImageBitmap(img);
                 }
 
                 if(event_info[5] != null && event_info[6] != null){ // has lat lng info
                     List links = controller.getKrumbsImageNearMe(Double.parseDouble(event_info[5]), Double.parseDouble(event_info[6]));
-                    String krumbsImageLinks = "";
                     for(int i = 0; i < links.size(); i ++){
-                        krumbsImageLinks += links.get(i);
-                        krumbsImageLinks += '\n';
+                        Log.d("Krumbs:", "yes added link " + links.get(i).toString());
+                        krumbsLinkArray.add(links.get(i).toString());
                     }
-                    krumbs_image_link.setText(krumbsImageLinks);
                 }
                 //Watch Later button
                 if (controller.hasPersonalItem(FeedReaderContract.WLEntry.TABLE_NAME,UserInfo.USER_ID, event_info[0])) {
@@ -196,6 +184,15 @@ public class EventViewActivity extends BaseActivity {
         Intent intent = new Intent(this, MapViewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArray("event_info", event_info);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    //go to Krumbs View
+    public void goKrumbsView(View view){
+        Intent intent = new Intent(this, KrumbsListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("dataset", krumbsLinkArray);
         intent.putExtras(bundle);
         startActivity(intent);
     }

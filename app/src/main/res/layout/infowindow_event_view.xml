@@ -1,7 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/custom_info_bubble">
-    <include layout="@layout/content_event_view" />
-</LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/custom_info_bubble"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.jessica.myuci.MapViewActivity">
+
+
+    <TextView
+        android:id="@+id/info_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:text="@string/title_placeholder"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/info_hoster"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/info_title"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="@string/hoster_placeholder" />
+
+    <TextView
+        android:id="@+id/info_start_time_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="@string/start_time_title"
+        android:layout_below="@id/info_hoster" />
+
+    <TextView
+        android:id="@+id/info_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="@string/start_time_placeholder"
+        android:layout_below="@id/info_hoster"
+        android:layout_toRightOf="@id/info_start_time_title" />
+
+    <TextView
+        android:id="@+id/info_end_time_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="@string/end_time_title"
+        android:layout_below="@id/info_start_time" />
+
+    <TextView
+        android:id="@+id/info_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="@string/end_time_placeholder"
+        android:layout_below="@id/info_start_time"
+        android:layout_toRightOf="@id/info_end_time_title" />
+
+    <TextView
+        android:id="@+id/info_location_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="Location: "
+        android:layout_below="@id/info_end_time" />
+
+
+    <TextView
+        android:id="@+id/info_location"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text = "@string/location_placeholder"
+        android:layout_below="@id/info_end_time"
+        android:layout_toRightOf="@id/info_location_title" />
+
+
+    <TextView
+        android:id="@+id/info_description_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="Description: "
+        android:layout_below="@id/info_location" />
+
+    <TextView
+        android:id="@+id/info_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text = "No description provided."
+        android:layout_below="@id/info_location"
+        android:layout_toRightOf="@id/info_description_title"/>
+
+    <TextView
+        android:id="@+id/info_link"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:paddingTop="6dip"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:autoLink="web"
+        android:clickable="true"
+        android:text = "@string/link_placeholder"
+        android:layout_below="@id/info_description" />
+
+
+</RelativeLayout>
+

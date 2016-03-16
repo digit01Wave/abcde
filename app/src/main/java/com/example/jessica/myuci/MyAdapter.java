@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.example.jessica.myuci.FeedReaderContract.EventEntry;
 
 /**
  * Created by Jessica on 2/9/2016.

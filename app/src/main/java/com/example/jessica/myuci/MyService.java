@@ -34,7 +34,7 @@ public class MyService extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-        Intent resultIntent = new Intent(this, TestActivity.class);
+        Intent resultIntent = new Intent(this, EventListActivity.class);
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0,
                 resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder mNotifyBuilder;

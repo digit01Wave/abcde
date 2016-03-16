@@ -1,5 +1,7 @@
 package com.example.jessica.myuci;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
@@ -11,8 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,7 +28,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MapViewActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
@@ -45,7 +50,6 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
                     .tilt(0)
                     .build();
 
-    private TextView image_link;
     private TextView title;
     private TextView hoster;
     private TextView start_time;
@@ -53,6 +57,7 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     private TextView location;
     private TextView description;
     private TextView link;
+
 
     private MySQLiteHelper controller = new MySQLiteHelper(this, null);
     @Override
@@ -137,14 +142,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             Log.d("map", "getInfoWindow");
             View v = inflater.inflate(R.layout.infowindow_event_view, null);
 
-            image_link = (TextView) v.findViewById(R.id.image);
-            title = (TextView) v.findViewById(R.id.event_title);
-            hoster = (TextView) v.findViewById(R.id.event_hoster);
-            start_time = (TextView) v.findViewById(R.id.event_start_time);
-            end_time = (TextView) v.findViewById(R.id.event_end_time);
-            location = (TextView) v.findViewById(R.id.event_location);
-            description = (TextView) v.findViewById(R.id.event_description);
-            link = (TextView) v.findViewById(R.id.event_link);
+            title = (TextView) v.findViewById(R.id.info_title);
+            hoster = (TextView) v.findViewById(R.id.info_hoster);
+            start_time = (TextView) v.findViewById(R.id.info_start_time);
+            end_time = (TextView) v.findViewById(R.id.info_end_time);
+            location = (TextView) v.findViewById(R.id.info_location);
+            description = (TextView) v.findViewById(R.id.info_description);
+            link = (TextView) v.findViewById(R.id.info_link);
 
             if(allEvents[clickedMarkerId][1] != null) {
                 title.setText(new SpannableString(allEvents[clickedMarkerId][1]));
@@ -167,6 +171,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
             if(allEvents[clickedMarkerId][4] != null) {
                 end_time.setText(new SpannableString(allEvents[clickedMarkerId][4]));
             }
+
+
             Log.d("map", "render marker info window ");
             return v;
         }
@@ -213,8 +219,13 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        marker.hideInfoWindow();
+        //marker.hideInfoWindow();
         //Toast.makeText(this, "Click Info Window", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, EventViewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArray("event_info", allEvents[clickedMarkerId]);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
     @Override
     public void onInfoWindowClose(Marker marker) {
@@ -222,6 +233,8 @@ public class MapViewActivity extends FragmentActivity implements OnMapReadyCallb
     }
     @Override
     public void onInfoWindowLongClick(Marker marker) {
-        //Toast.makeText(this, "Long Click Info Window", Toast.LENGTH_SHORT).show();
+
     }
+
+
 }
