@@ -104,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         //go to new activity
                         Intent intent = new Intent(LoginActivity.this, NavigatorActivity.class);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override
