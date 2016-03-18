@@ -33,7 +33,7 @@ import cz.msebera.android.httpclient.Header;
 
 import static com.example.jessica.myuci.GetLatLng.getlatlngFromAddress;
 
-public class CurrentEventsActivity extends AppCompatActivity {
+public class CurrentEventsActivity extends BaseActivity {
 
     //DB Class to perform DB related operations
     MySQLiteHelper controller = new MySQLiteHelper(this, null);

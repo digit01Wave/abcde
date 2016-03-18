@@ -82,11 +82,10 @@ public class EventViewActivity extends BaseActivity {
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
+                    createEventView();
                 }
 
                 ///
-
-                createEventView();
             }
         }.start();
 
@@ -101,7 +100,7 @@ public class EventViewActivity extends BaseActivity {
 
                 //set textViews
                 title.setText(event_info[1]);
-                
+
                 if (event_info[2] == null) { //host does not need to be there
                     hoster.setVisibility(View.GONE);
                 } else {
@@ -122,19 +121,19 @@ public class EventViewActivity extends BaseActivity {
                 } else {
                     link.setText(event_info[9]);
                 }
-                if(event_info[10] != null && img != null) { //if image_link is not empty
+                if (event_info[10] != null && img != null) { //if image_link is not empty
                     image_link.setImageBitmap(img);
                 }
 
-                if(event_info[5] != null && event_info[6] != null){ // has lat lng info
+                if (event_info[5] != null && event_info[6] != null) { // has lat lng info
                     List links = controller.getKrumbsImageNearMe(Double.parseDouble(event_info[5]), Double.parseDouble(event_info[6]));
-                    for(int i = 0; i < links.size(); i ++){
+                    for (int i = 0; i < links.size(); i++) {
                         Log.d("Krumbs:", "yes added link " + links.get(i).toString());
                         krumbsLinkArray.add(links.get(i).toString());
                     }
                 }
                 //Watch Later button
-                if (controller.hasPersonalItem(FeedReaderContract.WLEntry.TABLE_NAME,UserInfo.USER_ID, event_info[0])) {
+                if (controller.hasPersonalItem(FeedReaderContract.WLEntry.TABLE_NAME, UserInfo.USER_ID, event_info[0])) {
                     WLButton.setText(getString(R.string.delete_from_watch_later));
                 } else {
                     WLButton.setText(getString(R.string.add_to_watch_later));
@@ -156,7 +155,7 @@ public class EventViewActivity extends BaseActivity {
                 });
 
                 //Calendar button
-                if (controller.hasPersonalItem(CalendarEntry.TABLE_NAME,UserInfo.USER_ID, event_info[0])) {
+                if (controller.hasPersonalItem(CalendarEntry.TABLE_NAME, UserInfo.USER_ID, event_info[0])) {
                     CalendarButton.setText(getString(R.string.delete_from_calendar));
                 } else {
                     CalendarButton.setText(getString(R.string.add_to_calendar));
@@ -177,9 +176,9 @@ public class EventViewActivity extends BaseActivity {
                     }
                 });
                 Log.d("MSG: ", "EventViewActivity Completed");
-                try{
+                try {
                     prgDialog.dismiss();
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     Log.i("---", "Exception in thread");
                 }
             }

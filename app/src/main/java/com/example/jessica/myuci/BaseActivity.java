@@ -26,8 +26,12 @@ public class BaseActivity extends AppCompatActivity {
         if (id == R.id.action_logout) {
             //logout and go back to login screen while clearing the activity stack
             Intent intent  = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            FeedReaderContract.UserInfo.USER_ID = null;
             startActivity(intent);
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

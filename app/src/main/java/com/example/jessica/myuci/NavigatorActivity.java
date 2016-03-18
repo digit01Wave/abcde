@@ -25,6 +25,10 @@ public class NavigatorActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if(FeedReaderContract.UserInfo.USER_ID == null){
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
 
         Log.d("Krumbs", "load current image");
         new RetrieveImageLinkTask(getApplicationContext()).execute();
