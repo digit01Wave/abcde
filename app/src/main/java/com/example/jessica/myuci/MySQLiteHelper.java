@@ -20,6 +20,8 @@ import java.util.List;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
+    public static long last_updated = 0; //keeps track of when we had last updated our database
+
     // Database Version
     private static final int DATABASE_VERSION = 1;
     // Database Name
@@ -217,26 +219,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    /*Returns all events in SQLite Db - same format as in addEventItem*/
-    public String[][] getAllEventStrings() {
-        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME;
-        Log.d("MSG:", "getAllEventStrings()" + selectQuery);
-        return getEventStringsHelper(selectQuery);
-    }
 
     /*Returns all events in SQLite Db - same format as in addEventItem ordered by some column*/
     public String[][] getAllEventStrings(String col_order) {
-        String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " ORDER BY " + col_order;
+        String selectQuery;
+        Long curTimeStamp = System.currentTimeMillis();
+        if(col_order == null){
+            selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE start_time >=" +curTimeStamp;
+        }else {
+            selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE start_time >=" +curTimeStamp + " ORDER BY " + col_order;
+        }
         Log.d("MSG:", "getAllEventStrings()" + selectQuery);
         return getEventStringsHelper(selectQuery);
     }
 
     /*Returns all events in SQLite Db with specific contraints (WHERE)*/
     public String[][] getAllEventStringsWhere(String where_clause) {
-        if (where_clause.equals("null")) {
-            return getAllEventStrings();
+        if (where_clause==null || where_clause.equals("null")) {
+            return getAllEventStrings(null);
         }
-
         String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE " + where_clause;
         Log.d("MSG:", "getAllEventStringsWhere()" + selectQuery);
         return getEventStringsHelper(selectQuery);
@@ -244,16 +245,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /*Returns all events in SQLite Db with specific contraints (WHERE) and roder (order*/
     public String[][] getAllEventStringsWhereOrder(String where_clause, String ordered_by) {
-        if (where_clause.equals("null") && ordered_by.equals("null")) {
-            return getAllEventStrings();
-        } else if (where_clause.equals("null")) {
+        if (where_clause==null || where_clause.equals("null")) {
             return getAllEventStrings(ordered_by);
         }
         String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE " + where_clause + " ORDER BY " + ordered_by;
         Log.d("MSG:", "getAllEventStringsWhereOrder()" + selectQuery);
         return getEventStringsHelper(selectQuery);
     }
-
 
     /*Deletes all the Events - For Debugging Purposes*/
     public void deleteAllEvents(SQLiteDatabase db) {
@@ -355,7 +353,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.d("MSG:", "get all personal list events" + selectQuery);
         return getEventStringsHelper(selectQuery);
     }
-
 
     /**
      * Compose JSON out of SQLite records

@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -56,6 +57,7 @@ public class EventListActivity extends BaseActivity {
     ArrayAdapter<CharSequence> adapter;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +66,10 @@ public class EventListActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //create specialized bottom toolbar
+        SplitToolbar myToolbar = (SplitToolbar) findViewById(R.id.bottom_toolbar);
+        super.setOnCreateOptions(myToolbar, R.id.action_upcoming_events);
+        super.setClickListener(myToolbar, R.id.action_upcoming_events);
 
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(this);
@@ -72,7 +78,7 @@ public class EventListActivity extends BaseActivity {
 
         syncSQLiteMySQLDB();
 
-        myDataset = controller.getAllEventStrings();
+        myDataset = controller.getAllEventStrings(null);
         MyAdapter mAdapter = new MyAdapter(myDataset);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -92,7 +98,7 @@ public class EventListActivity extends BaseActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-                    myDataset = controller.getAllEventStrings();
+                    myDataset = controller.getAllEventStrings(null);
                     MyAdapter mAdapter = new MyAdapter(myDataset);
                     RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
                     mRecyclerView.setHasFixedSize(true);
@@ -171,8 +177,8 @@ public class EventListActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_my, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_upcoming_events);
+        menuItem.setIcon(R.drawable.ic_action_upcoming_events_selected);
         return true;
     }
 
@@ -181,10 +187,7 @@ public class EventListActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
         int id = item.getItemId();
-        // When Sync action button is clicked
-        if (id == R.id.refresh) {
-            // Transfer data from remote MySQL DB to SQLite on Android and perform Sync
-            syncSQLiteMySQLDB();
+        if(id==R.id.action_upcoming_events){
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -205,8 +208,13 @@ public class EventListActivity extends BaseActivity {
         RequestParams params = new RequestParams();
         // Show ProgressBar
         prgDialog.show();
+        //build JSON and get response
+        Gson gson = new GsonBuilder().create();
+        HashMap<String, Long> previousUpdate = new HashMap<String, Long>();
+        previousUpdate.put(EventEntry.COLUMN_NAME_LAST_UPDATED, MySQLiteHelper.last_updated);
+        params.put(FeedReaderContract.ServerEntry.JSON_GET_TITLE, gson.toJson(previousUpdate));
         // Make Http call to getusers.php
-        client.get(FeedReaderContract.ServerEntry.URL_GET_EVENT, params, new TextHttpResponseHandler() {
+        client.post(FeedReaderContract.ServerEntry.URL_GET_EVENT, params, new TextHttpResponseHandler() {
 
             @Override
             public void onStart() {
@@ -220,6 +228,7 @@ public class EventListActivity extends BaseActivity {
                 prgDialog.dismiss();
                 // Update SQLite DB with response sent by getusers.php
                 Log.d("MSG: ", "Grabbed Event Successfully = " + response);
+                MySQLiteHelper.last_updated = java.lang.System.currentTimeMillis();
                 updateSQLite(response);
 
             }

@@ -163,12 +163,11 @@ public class CurrentEventsActivity extends BaseActivity {
     }
 
 
-    // Options Menu (ActionBar Menu)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_my, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_current_events);
+        menuItem.setIcon(R.drawable.ic_action_current_events_selected);
         return true;
     }
 
@@ -177,10 +176,7 @@ public class CurrentEventsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
         int id = item.getItemId();
-        // When Sync action button is clicked
-        if (id == R.id.refresh) {
-            // Transfer data from remote MySQL DB to SQLite on Android and perform Sync
-            syncSQLiteMySQLDB();
+        if(id==R.id.action_current_events){
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -6,7 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="action_favorite">Favorite Action</string>
     <string name="action_search">Search</string>
-    <string name="action_share">Share</string>
+    <string name="action_label_upcoming_events">Upcoming Events</string>
+    <string name="action_label_calendar">My Calendar</string>
+    <string name="action_label_watch_later">Watch Later List</string>
+    <string name="action_label_current_events">Current Events</string>
 
     <!--ACTIVITY TITLES-->
     <string name="title_activity_login">LoginActivity</string>
@@ -63,6 +66,8 @@
     <string name="title_activity_map_view">Map</string>
     <string name="label_activity_current_event">CurrentEventActivity</string>
 
+    <!--Spinner-->
+    <string name="spinner_title">Sort By:</string>
     <string-array name="sort">
         <item>default</item>
         <item>start time</item>

@@ -33,7 +33,6 @@ public class NavigatorActivity extends BaseActivity {
         Log.d("Krumbs", "load current image");
         new RetrieveImageLinkTask(getApplicationContext()).execute();
 
-        //KrumbsSDK.initialize(getApplicationContext(), "zmmzAIzwM65XahnKb1lmD1ij7z4J2bToqRRIuGDH", "bJI7wx5HafWH9x6icjJ9RtMQEZf4XxpoOtX6TJwm");
 
     }
 

@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,6 +21,9 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.example.jessica.myuci.FeedReaderContract.WLEntry;
+import com.example.jessica.myuci.FeedReaderContract.CalendarEntry;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -103,7 +108,36 @@ public class PersonalListActivity extends BaseActivity {
 
     }
 
+    // Options Menu (ActionBar Menu)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        if(table_name.equals(WLEntry.TABLE_NAME)) {
+            MenuItem menuItem = menu.findItem(R.id.action_watch_later);
+            menuItem.setIcon(R.drawable.ic_action_watch_later_selected);
+        }else if(table_name.equals(CalendarEntry.TABLE_NAME)) {
+            MenuItem menuItem = menu.findItem(R.id.action_calendar);
+            menuItem.setIcon(R.drawable.ic_action_calendar_selected);
+        }
+        return true;
+    }
 
+    // When Options Menu is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(table_name.equals(WLEntry.TABLE_NAME)) {
+            if(id == R.id.action_watch_later){
+                return true;
+            }
+        }else if(table_name.equals(CalendarEntry.TABLE_NAME)) {
+            if(id == R.id.action_calendar){
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public void syncSQLiteMySQLDB(){
         //Create AsycHttpClient object

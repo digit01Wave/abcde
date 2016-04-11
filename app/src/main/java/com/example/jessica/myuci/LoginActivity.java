@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                         loginPrefsEditor.commit();
 
                         //go to new activity
-                        Intent intent = new Intent(LoginActivity.this, NavigatorActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, EventListActivity.class);
                         startActivity(intent);
                         finish();
                     }

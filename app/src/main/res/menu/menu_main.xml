@@ -7,6 +7,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".StarterActivity">
+
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:orderInCategory="100"
@@ -17,4 +18,29 @@
         android:title="@string/action_logout"
         android:orderInCategory="100"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_calendar"
+        android:icon="@drawable/ic_action_calendar"
+        android:title="@string/action_label_calendar"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_watch_later"
+        android:icon="@drawable/ic_action_watch"
+        android:title="@string/action_label_watch_later"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_current_events"
+        android:icon="@drawable/ic_action_current"
+        android:title="@string/action_label_current_events"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_upcoming_events"
+        android:icon="@drawable/ic_action_upcoming"
+        android:title="@string/action_label_upcoming_events"
+        app:showAsAction="always"/>
+
 </menu>
