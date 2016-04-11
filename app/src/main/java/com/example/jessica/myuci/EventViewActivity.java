@@ -4,8 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class EventViewActivity extends BaseActivity {
+public class EventViewActivity extends AppCompatActivity {
     private ProgressDialog prgDialog;
     private MySQLiteHelper controller = new MySQLiteHelper(this, null);
 
@@ -43,6 +46,13 @@ public class EventViewActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //get event items
+        prgDialog = new ProgressDialog(this);
+        prgDialog.setMessage("Getting full event data. Please wait...");
+        prgDialog.setCancelable(false);
+        prgDialog.show();
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,12 +71,6 @@ public class EventViewActivity extends BaseActivity {
         WLButton = (Button) findViewById(R.id.event_watch_later_button);
         CalendarButton = (Button) findViewById(R.id.event_calendar_button);
 
-
-        //get event items
-        prgDialog = new ProgressDialog(this);
-        prgDialog.setMessage("Getting full event data. Please wait...");
-        prgDialog.setCancelable(false);
-        prgDialog.show();
 
 
         new Thread(){
@@ -184,6 +188,34 @@ public class EventViewActivity extends BaseActivity {
             }
 
         });
+    }
+
+    // Options Menu (ActionBar Menu)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    // When Options Menu is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here.
+        int id = item.getItemId();
+        // When logout action button is clicked
+        if (id == R.id.action_logout) {
+            //logout and go back to login screen while clearing the activity stack
+            Intent intent  = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            FeedReaderContract.UserInfo.USER_ID = null;
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void goEventMapView(View view){

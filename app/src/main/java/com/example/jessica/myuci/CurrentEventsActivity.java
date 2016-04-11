@@ -50,17 +50,21 @@ public class CurrentEventsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_current_events);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(this);
         prgDialog.setMessage("Transferring Data from Remote MySQL DB and Syncing SQLite. Please wait...");
         prgDialog.setCancelable(false);
+
+        super.onCreate(savedInstanceState);
+        super.setContentView(R.layout.content_event_list);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //create specialized bottom toolbar
+        SplitToolbar myToolbar = (SplitToolbar) findViewById(R.id.bottom_toolbar);
+        super.setOnCreateOptions(myToolbar, R.id.action_current_events);
+        super.setClickListener(myToolbar, R.id.action_current_events);
 
         syncSQLiteMySQLDB();
         Long curTimeStamp = System.currentTimeMillis();
@@ -162,25 +166,6 @@ public class CurrentEventsActivity extends BaseActivity {
 
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        MenuItem menuItem = menu.findItem(R.id.action_current_events);
-        menuItem.setIcon(R.drawable.ic_action_current_events_selected);
-        return true;
-    }
-
-    // When Options Menu is selected
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here.
-        int id = item.getItemId();
-        if(id==R.id.action_current_events){
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onResume() {

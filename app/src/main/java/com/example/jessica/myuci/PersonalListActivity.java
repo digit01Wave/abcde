@@ -3,14 +3,10 @@ package com.example.jessica.myuci;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -38,20 +34,30 @@ public class PersonalListActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_personal_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
         //Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(this);
         prgDialog.setMessage("Syncing your new data with remote database. Please wait...");
         prgDialog.setCancelable(false);
 
+        super.onCreate(savedInstanceState);
+        super.setContentView(R.layout.content_personal_list);
+
         //find which personalized list we are viewing
         Bundle extras = getIntent().getExtras();
         table_name = extras.getString("table_name");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //create specialized bottom toolbar
+        SplitToolbar myToolbar = (SplitToolbar) findViewById(R.id.bottom_toolbar);
+        if(table_name.equals(WLEntry.TABLE_NAME)) {
+            super.setOnCreateOptions(myToolbar, R.id.action_watch_later);
+            super.setClickListener(myToolbar, R.id.action_watch_later);
+        }else if(table_name.equals(CalendarEntry.TABLE_NAME)) {
+            super.setOnCreateOptions(myToolbar, R.id.action_calendar);
+            super.setClickListener(myToolbar, R.id.action_calendar);
+        }
 
         //get the appropriate urls
         if(table_name.equals(FeedReaderContract.WLEntry.TABLE_NAME)){
@@ -108,36 +114,6 @@ public class PersonalListActivity extends BaseActivity {
 
     }
 
-    // Options Menu (ActionBar Menu)
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        if(table_name.equals(WLEntry.TABLE_NAME)) {
-            MenuItem menuItem = menu.findItem(R.id.action_watch_later);
-            menuItem.setIcon(R.drawable.ic_action_watch_later_selected);
-        }else if(table_name.equals(CalendarEntry.TABLE_NAME)) {
-            MenuItem menuItem = menu.findItem(R.id.action_calendar);
-            menuItem.setIcon(R.drawable.ic_action_calendar_selected);
-        }
-        return true;
-    }
-
-    // When Options Menu is selected
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if(table_name.equals(WLEntry.TABLE_NAME)) {
-            if(id == R.id.action_watch_later){
-                return true;
-            }
-        }else if(table_name.equals(CalendarEntry.TABLE_NAME)) {
-            if(id == R.id.action_calendar){
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     public void syncSQLiteMySQLDB(){
         //Create AsycHttpClient object

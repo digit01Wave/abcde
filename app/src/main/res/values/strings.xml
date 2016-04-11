@@ -21,6 +21,7 @@
     <string name="title_activity_krumbs">KrumbsActivity</string>
     <string name="title_activity_personal_list">PersonalListActivity</string>
     <string name="title_activity_watch_later_list">WatchLaterListActivity</string>
+    <string name="title_activity_base">BaseActivity</string>
 
     <!--KRUMBS LABELS-->
     <string name="krumbs_button_label">Krumbs Capture</string>

@@ -1,12 +1,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.jessica.myuci.MyActivity">
+    tools:context="com.example.jessica.myuci.StarterActivity">
 
     <item
-        android:id="@+id/refresh"
-        android:icon="@drawable/ic_action_refresh"
-        android:orderInCategory="100"
-        android:title="Refresh"
+        android:id="@+id/action_calendar"
+        android:icon="@drawable/ic_action_calendar"
+        android:title="@string/action_label_calendar"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_watch_later"
+        android:icon="@drawable/ic_action_watch"
+        android:title="@string/action_label_watch_later"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_current_events"
+        android:icon="@drawable/ic_action_current"
+        android:title="@string/action_label_current_events"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_upcoming_events"
+        android:icon="@drawable/ic_action_upcoming"
+        android:title="@string/action_label_upcoming_events"
         app:showAsAction="always"/>
 </menu>

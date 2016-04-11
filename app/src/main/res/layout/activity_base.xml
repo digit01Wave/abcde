@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.jessica.myuci.PersonalListActivity">
+
+    tools:context="com.example.jessica.myuci.BaseActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -16,11 +17,16 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:titleTextColor="#FFFFFF"
+            android:subtitleTextColor="#000000"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_personal_list" />
+
+    <include layout="@layout/base_layout" />
+
 
 </android.support.design.widget.CoordinatorLayout>
