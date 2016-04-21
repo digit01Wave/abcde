@@ -91,5 +91,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return mDataset[position];
     }
 
+    public void setMyDataset(String[][] newDataset){
+        this.mDataset=newDataset;
+    }
+
 
 }

@@ -15,7 +15,7 @@ import java.util.Map;
 import io.krumbs.sdk.KrumbsSDK;
 import io.krumbs.sdk.krumbscapture.KCaptureCompleteListener;
 
-public class KrumbsActivity extends BaseActivity {
+public class KrumbsActivity extends AppCompatActivity {
     private View cameraView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

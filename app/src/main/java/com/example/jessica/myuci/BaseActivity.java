@@ -1,16 +1,39 @@
 package com.example.jessica.myuci;
 
-import android.app.Activity;
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Jessica on 3/2/2016.
@@ -24,7 +47,11 @@ public class BaseActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         //make sure already logged in
         if(FeedReaderContract.UserInfo.USER_ID == null){
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent  = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             finish();
         }
 
@@ -32,6 +59,17 @@ public class BaseActivity extends AppCompatActivity{
         super.setContentView(R.layout.activity_base);
 
         this.innerLayout = (RelativeLayout) this.findViewById(R.id.inner_layout);
+
+        //krumbs action button
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), KrumbsActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -95,14 +133,14 @@ public class BaseActivity extends AppCompatActivity{
     public void setClickListener(Toolbar toolbar, final int action_id){
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem menuItem){
+            public boolean onMenuItemClick(MenuItem menuItem) {
                 // Handle action bar item clicks here.
                 int id = menuItem.getItemId();
-                if(id == action_id){
+                if (id == action_id) {
                     //do nothing
                     return true;
                 }
-                if(id == R.id.action_watch_later){
+                if (id == R.id.action_watch_later) {
                     Intent intent = new Intent(getApplicationContext(), PersonalListActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("table_name", FeedReaderContract.WLEntry.TABLE_NAME);
@@ -111,7 +149,7 @@ public class BaseActivity extends AppCompatActivity{
                     finish();
                     return true;
                 }
-                if(id == R.id.action_calendar){
+                if (id == R.id.action_calendar) {
                     Intent intent = new Intent(getApplicationContext(), PersonalListActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("table_name", FeedReaderContract.CalendarEntry.TABLE_NAME);
@@ -120,13 +158,13 @@ public class BaseActivity extends AppCompatActivity{
                     finish();
                     return true;
                 }
-                if(id == R.id.action_upcoming_events){
+                if (id == R.id.action_upcoming_events) {
                     Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
                     startActivity(intent);
                     finish();
                     return true;
                 }
-                if(id == R.id.action_current_events){
+                if (id == R.id.action_current_events) {
                     Intent intent = new Intent(getApplicationContext(), CurrentEventsActivity.class);
                     startActivity(intent);
                     finish();
@@ -138,4 +176,5 @@ public class BaseActivity extends AppCompatActivity{
         });
 
     }
+
 }

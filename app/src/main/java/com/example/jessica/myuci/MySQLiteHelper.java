@@ -206,9 +206,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         }
 
         try {
-            Log.d("MSG: ", "STRING START");
             // insert
-            db.insert(EventEntry.TABLE_NAME, // table
+            db.replace(EventEntry.TABLE_NAME, // table
                     null, //nullColumnHack
                     values); // key/value -> keys = column names/ values = column values
         } catch (Exception e) {
@@ -226,7 +225,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Long curTimeStamp = System.currentTimeMillis();
         if(col_order == null){
             selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE start_time >=" +curTimeStamp;
-        }else {
+        }
+        else {
             selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE start_time >=" +curTimeStamp + " ORDER BY " + col_order;
         }
         Log.d("MSG:", "getAllEventStrings()" + selectQuery);
@@ -245,7 +245,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     /*Returns all events in SQLite Db with specific contraints (WHERE) and roder (order*/
     public String[][] getAllEventStringsWhereOrder(String where_clause, String ordered_by) {
-        if (where_clause==null || where_clause.equals("null")) {
+        if ((where_clause == null) || where_clause.equals("null")) {
             return getAllEventStrings(ordered_by);
         }
         String selectQuery = "SELECT  * FROM " + EventEntry.TABLE_NAME + " WHERE " + where_clause + " ORDER BY " + ordered_by;
@@ -253,12 +253,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return getEventStringsHelper(selectQuery);
     }
 
-    /*Deletes all the Events - For Debugging Purposes*/
-    public void deleteAllEvents(SQLiteDatabase db) {
-        /*will delete all events in database*/
-        db.delete(EventEntry.TABLE_NAME, null, null);
-        Log.d("MSG: ", "All events have been deleted");
-    }
         /*
     ################################################################################################
 
@@ -360,7 +354,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public String composeJSONfromPersonalSQLite(String table_name) {
         //initialize
         ArrayList<HashMap<String, String>> wordList;
-        wordList = new ArrayList<HashMap<String, String>>();
+        wordList = new ArrayList<>();
         SQLiteDatabase database = this.getWritableDatabase();
         String selectQuery = "SELECT  * FROM " + table_name + " where " +
                 PersonalEntry.COLUMN_NAME_UPDATE_STATUS + " = '" + ServerEntry.UPDATE_STATUS_UNSYNCED + "'";
@@ -369,7 +363,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         //add all entries to be added
         if (cursor.moveToFirst()) {
             do {
-                HashMap<String, String> map = new HashMap<String, String>();
+                HashMap<String, String> map = new HashMap<>();
                 map.put(PersonalEntry.COLUMN_NAME_USER_ID, cursor.getString(0));
                 map.put(PersonalEntry.COLUMN_NAME_EVENT_ID, cursor.getString(1));
                 map.put(ServerEntry.UPDATE_ACTION_TITLE, ServerEntry.UPDATE_ACTION_ADD);
@@ -384,7 +378,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             cursor = database.rawQuery("SELECT * FROM " + CalendarEntry.TO_DELETE_TABLE_NAME, null);
         }
         if (cursor.moveToFirst()) {
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
             map.put(PersonalEntry.COLUMN_NAME_USER_ID, cursor.getString(0));
             map.put(PersonalEntry.COLUMN_NAME_EVENT_ID, cursor.getString(1));
             map.put(ServerEntry.UPDATE_ACTION_TITLE, ServerEntry.UPDATE_ACTION_DELETE);

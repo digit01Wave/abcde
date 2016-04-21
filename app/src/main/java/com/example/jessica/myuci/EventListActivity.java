@@ -1,14 +1,13 @@
 package com.example.jessica.myuci;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,47 +15,21 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.jessica.myuci.FeedReaderContract.EventEntry;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
 
 
-import cz.msebera.android.httpclient.Header;
-
-import static com.example.jessica.myuci.GetLatLng.getlatlngFromAddress;
+public class EventListActivity extends EventSyncActivity {
 
 
-public class EventListActivity extends BaseActivity {
-
-    //DB Class to perform DB related operations
-    MySQLiteHelper controller = new MySQLiteHelper(this, null);
-
-    //Progress Dialog Object
-    ProgressDialog prgDialog;
-    String[] queryValues;
     String[][] myDataset;
 
     //Spinner, learned how to use spinner from https://www.youtube.com/watch?v=28jA5-mO8K8
     Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
 
-
+    MyAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Initialize Progress Dialog properties
-        prgDialog = new ProgressDialog(this);
-        prgDialog.setMessage("Transferring Data from Remote MySQL DB and Syncing SQLite. Please wait...");
-        prgDialog.setCancelable(false);
-
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.content_event_list);
 
@@ -70,65 +43,49 @@ public class EventListActivity extends BaseActivity {
 
         syncSQLiteMySQLDB();
 
+        Log.d("MSG: ", "About to get events and set adapter");
         myDataset = controller.getAllEventStrings(null);
-        MyAdapter mAdapter = new MyAdapter(myDataset);
+        mAdapter = new MyAdapter(myDataset);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-
-        mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+
+        //settings for recycler view
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
         // Spinner
-        spinner=(Spinner) findViewById(R.id.spinner);
-        adapter=ArrayAdapter.createFromResource(this, R.array.sort, android.R.layout.simple_spinner_item);
+        spinner = (Spinner) findViewById(R.id.spinner);
+        adapter = ArrayAdapter.createFromResource(this, R.array.sort, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("MSG: ", "inside spinner");
                 if (position == 0) {
                     myDataset = controller.getAllEventStrings(null);
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
                 }
                 if (position == 1) {
                     myDataset = controller.getAllEventStrings("start_time");
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
                 }
                 if (position == 2) {
                     myDataset = controller.getAllEventStrings("end_time");
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
                 }
-                if (position == 3) {
-                    myDataset = controller.getAllEventStrings("location");
-                    MyAdapter mAdapter = new MyAdapter(myDataset);
-                    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    mRecyclerView.setHasFixedSize(true);
-                    // use a linear layout manager
-                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
+                if (position == 3) { //distance
+                    Location location = getMyLocation();
+                    if(location == null){
+                        Toast.makeText(getApplicationContext(), "No GPS coordinates found. List not updated.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    myDataset = controller.getAllEventStrings("( 3959 * acos( cos( radians("+location.getLatitude()+")" +
+                            " * cos( radians( lat ) ) * cos( radians( lon ) - radians("+location.getLongitude()+ ") ) + " +
+                            "sin( radians("+location.getLatitude()+") ) * sin(radians(lat)) ) )");
                 }
+                mAdapter.setMyDataset(myDataset);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -171,118 +128,7 @@ public class EventListActivity extends BaseActivity {
         super.onResume();
     }
 
-    // Method to Sync MySQL to SQLite DB
-    public void syncSQLiteMySQLDB() {
-        Log.d("MSG: ", "Starting Event Sync");
-        // Create AsycHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
-        // Http Request Params Object
-        RequestParams params = new RequestParams();
-        // Show ProgressBar
-        prgDialog.show();
-        //build JSON and get response
-        Gson gson = new GsonBuilder().create();
-        HashMap<String, Long> previousUpdate = new HashMap<String, Long>();
-        previousUpdate.put(EventEntry.COLUMN_NAME_LAST_UPDATED, MySQLiteHelper.last_updated);
-        params.put(FeedReaderContract.ServerEntry.JSON_GET_TITLE, gson.toJson(previousUpdate));
-        // Make Http call to getusers.php
-        client.post(FeedReaderContract.ServerEntry.URL_GET_EVENT, params, new TextHttpResponseHandler() {
 
-            @Override
-            public void onStart() {
-                // called before request is started
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String response) { //byte [] response
-                // called when response HTTP status is "200 OK"
-                // Hide ProgressBar
-                prgDialog.dismiss();
-                // Update SQLite DB with response sent by getusers.php
-                Log.d("MSG: ", "Grabbed Event Successfully = " + response);
-                MySQLiteHelper.last_updated = java.lang.System.currentTimeMillis();
-                updateSQLite(response);
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String response, Throwable e) { //byte[] response
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                // Hide ProgressBar
-                prgDialog.dismiss();
-                if (statusCode == 404) {
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 500) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                            Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-
-        });
-    }
-
-    public void updateSQLite(String response){
-        Log.d("MSG: ", "starting sqlLite event update ");
-        // Create GSON object
-        Gson gson = new GsonBuilder().create();
-        try {
-            // Extract JSON array from the response
-            JSONArray arr = new JSONArray(response);
-            Log.d("MSG: ", "JSON array length = " + Integer.toString(arr.length()));
-            // If array elements is not zero and is not equal to what we already have
-            if(arr.length() != 0 && arr.length() != controller.getTableLength(EventEntry.TABLE_NAME)){
-                // Loop through each array element, get JSON object which has userid and username
-                for (int i = 0; i < arr.length(); i++) {
-                    // Get JSON object
-                    JSONObject obj = (JSONObject) arr.get(i);
-                    queryValues = new String[EventEntry.NUM_COLUMNS];
-
-                    // DB QueryValues Object to insert into SQLite
-                    queryValues[0] = obj.get(EventEntry.COLUMN_NAME_EVENT_ID).toString();
-                    queryValues[1] = obj.get(EventEntry.COLUMN_NAME_TITLE).toString();
-                    queryValues[2] = obj.get(EventEntry.COLUMN_NAME_HOSTER).toString();
-                    queryValues[3] = obj.get(EventEntry.COLUMN_NAME_START_TIME).toString();
-                    queryValues[4] = obj.get(EventEntry.COLUMN_NAME_END_TIME).toString();
-                    queryValues[5] = obj.get(EventEntry.COLUMN_NAME_LAT).toString();
-                    queryValues[6] = obj.get(EventEntry.COLUMN_NAME_LON).toString();
-                    queryValues[7] = obj.get(EventEntry.COLUMN_NAME_LOCATION).toString();
-                    queryValues[8] = obj.get(EventEntry.COLUMN_NAME_DESCRIPTION).toString();
-                    queryValues[9] = obj.get(EventEntry.COLUMN_NAME_LINK).toString();
-                    queryValues[10] = obj.get(EventEntry.COLUMN_NAME_IMAGE_LINK).toString();
-                    queryValues[11] = obj.get(EventEntry.COLUMN_NAME_SOURCE_TYPE).toString();
-                    queryValues[12] = obj.get(EventEntry.COLUMN_NAME_SOURCE_SUBTYPE).toString();
-                    //if no lat or lon, then try and generate them from location
-                    if(queryValues[5].equals("null") || queryValues[6].equals("null")){
-                        LatLng loc = getlatlngFromAddress(EventListActivity.this, queryValues[7] + " Irvine, CA");
-                        if(loc != null){
-                            queryValues[5] = Double.toString(loc.latitude);
-                            queryValues[6] = Double.toString(loc.longitude);
-                            Log.d("MSG: ", "Retrieved Lat Long for event_id {" + queryValues[0]+ "} is (" + queryValues[5] + ", " + queryValues[6] + ")");
-                        }
-                    }
-
-                    // Insert Event into SQLite DB
-                    try {
-                        controller.addEventItem(queryValues, false);
-                    } catch(java.text.ParseException e){
-                        Log.d("FAILED: ", "Parse excpetion error. Could not add to Database" + e);
-                    }
-                }
-                // Inform Remote MySQL DB about the completion of Sync activity by passing Sync status of Users
-                //updateMySQLSyncSts(gson.toJson(event_synclist));
-                // Reload the Main Activity
-                reloadActivity();
-            }
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            Log.d("---", "error in updateMySqlLite");
-            e.printStackTrace();
-        }
-    }
 
     // Reload MainActivity
     public void reloadActivity() {

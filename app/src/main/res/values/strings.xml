@@ -73,7 +73,7 @@
         <item>default</item>
         <item>start time</item>
         <item>end time</item>
-        <item>location</item>
+        <item>distance</item>
     </string-array>
     <string name="title_activity_krumbs_list">KrumbsListActivity</string>
 
